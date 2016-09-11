@@ -1,0 +1,29 @@
+{
+    "lookupPaths": [
+        "src/"
+    ],
+    "stripFileExtensions": [],
+    "namedExports" : {
+        "src/af/util/make.js" : [
+            "Make",
+            "hasPrototype",
+            "Mixin"
+        ],
+
+        "src/af/modules/DataBinding/Template.js" : [
+            "makeTemplate"
+        ],
+
+        "src/af/modules/DataBinding/Util.js" : [
+            "polyInvoke",
+            "nodeIsVisible",
+            "getPolyParent"
+        ],
+
+        "src/af/modules/DataBinding/Parser.js" : [
+            "parseExpression",
+            "assignExpression",
+            "ObjectParser"
+        ]
+    }
+}
