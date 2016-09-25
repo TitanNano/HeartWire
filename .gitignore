@@ -2,3 +2,4 @@ node_modules/
 bower_components/
 dist/
 platforms/cordova/platforms/
+platforms/cordova/plugins/
