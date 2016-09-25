@@ -21,8 +21,15 @@
             font-size: 1.4rem;
         }
 
+        .view {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
         paper-header-panel {
             flex: 1 1 100%;
+            height: auto;
         }
 
         paper-card {
@@ -54,6 +61,17 @@
             max-height: 10rem;
             overflow: auto;
             line-height: 2rem;
+            position: relative;
+        }
+
+        .bottom-input .input::before {
+            content: '';
+            position: absolute;
+            top:0;
+        }
+
+        .bottom-input .input.placeholder:not(:focus)::before {
+            content: attr(placeholder);
         }
 
         .input:focus {
@@ -81,24 +99,52 @@
             justify-content: flex-end;
         }
 
+        /* App Colors */
+        /* Pink */
         [partner-color="pink"] .in paper-card,
         [my-color="pink"] .out paper-card {
             background-color: var(--paper-pink-50);
         }
 
-        [partner-color="blue"] .in paper-card,
-        [my-color="blue"] .out paper-card {
-            background-color: var(--paper-blue-50);
-        }
-
-        [my-color="blue"] paper-toolbar {
-            background: var(--paper-blue-500);
+        [my-color="pink"] .bottom-input paper-icon-button {
+            color: var(--paper-pink-500);
         }
 
         [my-color="pink"] paper-toolbar {
             background: var(--paper-pink-500);
         }
 
+        /* Blue */
+        [partner-color="blue"] .in paper-card,
+        [my-color="blue"] .out paper-card {
+            background-color: var(--paper-blue-50);
+        }
+
+        [my-color="blue"] .bottom-input paper-icon-button {
+            color: var(--paper-blue-500);
+        }
+
+        [my-color="blue"] paper-toolbar {
+            background: var(--paper-blue-500);
+        }
+
+        /* Green */
+        [partner-color="green"] .in paper-card,
+        [my-color="green"] .out paper-card {
+            background-color: var(--paper-green-50);
+        }
+
+        [my-color="green"] .bottom-input paper-icon-button {
+            color: var(--paper-green-500);
+        }
+
+        [my-color="green"] paper-toolbar {
+            background: var(--paper-green-500);
+        }
+
+        paper-toolbar.not-ready * {
+            visibility: hidden;
+        }
 
         button[invisible] {
             border: none;
@@ -112,7 +158,22 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%);
+            transform: translate(-50%, -50%);
+        }
+
+        paper-spinner.center {
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 1rem 0;
+        }
+
+        .error-container {
+            color: #dd2c00;
+            padding: 1rem 0;
+        }
+
+        .sync-dialog {
+            width: 417px;
         }
     </style>
   </template>

@@ -24,6 +24,10 @@
             "parseExpression",
             "assignExpression",
             "ObjectParser"
+        ],
+
+        "src/af/modules/sha-256.js": [
+            "sha256Native"
         ]
     }
 }

@@ -1,0 +1,4 @@
+<template>
+    <div bind-display="view.notConnected" class="title">{{view.connectionStatus}}</div>
+    <div bind-display="view.connected"    class="title">{{view.partner.name}} - {{view.isOnline(view.partner)}}</div>
+</template>

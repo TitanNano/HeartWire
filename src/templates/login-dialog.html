@@ -1,0 +1,24 @@
+<template>
+    <paper-dialog entry-animation="scale-up-animation"
+    exit-animation="fade-out-animation" modal bind-attr="{ name: opened, enabled: view.isOpen }">
+    <h2>Login</h2>
+
+    <div bind-visible="view.isNotActive">
+        <div class="error-container" bind-display="view.hasError">
+            {{view.lastError}}
+        </div>
+
+        <paper-input label="Username" bind-value="view.username" error-message="{{view.getErrorMessage(element)}}"
+        required scope-id="view.usernameField"></paper-input>
+        <paper-input type="password" label="Password" bind-value="view.password"
+        required error-message="{{view.getErrorMessage(element)}}"
+        scope-id="view.passwordField"></paper-input>
+    </div>
+    <div bind-visible="view.isNotActive" class="buttons">
+        <paper-button bind-events="{ click: view.login }">Login</paper-submit>
+        </div>
+
+        <paper-spinner class="center-item" alt="Siging in" bind-display="view.active"
+        bind-attr="{ name: active, enabled: view.active }"></paper-spinner>
+    </paper-dialog>
+</template>

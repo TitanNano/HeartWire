@@ -3,10 +3,21 @@ const gutil = require('gulp-util');
 const vulcanize = require('gulp-vulcanize');
 const webpack = require('gulp-webpack');
 const rename = require("gulp-rename");
+const templates = require('./gulp-tasks/templates');
+const clean = require('gulp-clean');
 
+gulp.task('clean', () => {
+    return gulp.src('dist', {read: false})
+        .pipe(clean());
+});
 
-gulp.task('vulcanize', ['copy-libs'], () => {
-    return gulp.src('src/index.html')
+gulp.task('copy:bower', ['clean'], () => {
+    gulp.src('bower_components/**')
+        .pipe(gulp.dest('src/bower_components'));
+});
+
+gulp.task('vulcanize', ['clean', 'copy:bower', 'copy-libs'], () => {
+    gulp.src('src/index.html')
         .pipe(vulcanize({
             abspath: '',
             excludes: ['cordova.js', 'libs/', 'js/app.js'],
@@ -14,29 +25,34 @@ gulp.task('vulcanize', ['copy-libs'], () => {
             inlineScripts: false,
             inlineCss: false,
         }))
+        .pipe(templates.import)
         .on('error', gutil.log)
-        .pipe(gulp.dest('dist/'));
+        .pipe(gulp.dest('dist/web/'));
 });
 
-gulp.task('copy-static', () => {
-    gulp.src(['src/**/*.svg', 'src/**/*.jpg'])
-        .pipe(gulp.dest('dist/'));
+gulp.task('copy-static', ['clean'], () => {
+    gulp.src(['src/**/*.svg', 'src/**/*.jpg', 'src/**/*.png'])
+        .pipe(gulp.dest('dist/web/'));
 
     return gulp.src('src/css/**')
-        .pipe(gulp.dest('dist/css/'));
+        .pipe(gulp.dest('dist/web/css/'));
 });
 
-gulp.task('cordova', ['default'], () => {
-    gulp.src('dist/**')
-        .pipe(gulp.dest('platforms/cordova/www/'))
-});
+gulp.task('copy-libs', ['clean'], () => {
+    gulp.src('bower_components/web-animations-js/web-animations-next-lite.min.js')
+        .pipe(gulp.dest('dist/web/bower_components/web-animations-js/'));
 
-gulp.task('copy-libs', () => {
+    gulp.src('bower_components/font-roboto/roboto.css')
+        .pipe(gulp.dest('dist/web/bower_components/font-roboto/'));
+
+    gulp.src(['bower_components/font-roboto/fonts/*.tff'])
+        .pipe(gulp.dest('dist/web/bower_components/font-roboto/fonts/'));
+
     return gulp.src('bower_components/webcomponentsjs/webcomponents-lite.min.js')
-        .pipe(gulp.dest('dist/libs'));
+        .pipe(gulp.dest('dist/web/libs'));
 });
 
-gulp.task('compile', () => {
+gulp.task('compile', ['clean'], () => {
     return gulp.src('src/js/bootstrap.js')
         .pipe(webpack({
             module: {
@@ -46,7 +62,7 @@ gulp.task('compile', () => {
                         exclude: /(node_modules|bower_components)/,
                         loader: 'babel',
                         query: {
-                            presets: ['es2015'],
+                            presets: ['babel-preset-es2015'],
                             sourceMaps: true,
                         }
                     }
@@ -58,9 +74,31 @@ gulp.task('compile', () => {
             devtool: 'source-map',
         }))
         .pipe(rename({ basename: 'app' }))
-        .pipe(gulp.dest('dist/js'));
+        .pipe(gulp.dest('dist/web/js'));
+});
+
+gulp.task('build', ['copy-static', 'vulcanize', 'compile', 'copy-libs'], () => {
+    return true;
+});
+
+gulp.task('platform:web', ['build'], () => {
+    return gulp.src('platforms/web/**')
+        .pipe(gulp.dest('dist/web/'));
+});
+
+gulp.task('platform:cordova', () => {
+    gulp.src('platforms/cordova/**')
+        .pipe(gulp.dest('dist/cordova'));
+
+    return gulp.src('dist/web/**')
+        .pipe(gulp.dest('dist/cordova/www/'))
+});
+
+gulp.task('platform:fxos', [], () => {
+    gulp.src('platforms/fxos/**')
+        .pipe(gulp.dest('dist/fxos'));
 })
 
-gulp.task('default', ['copy-static', 'vulcanize', 'compile'], () => {
+gulp.task('default', ['platform:web'], () => {
     return true;
 });

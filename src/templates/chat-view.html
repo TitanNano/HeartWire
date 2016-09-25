@@ -1,0 +1,25 @@
+<!-- controller: ChatView.js -->
+
+<template>
+    <div class="view chat" partner-color="{{view.partner.color}}" my-color="{{view.account.color}}">
+
+        <paper-header-panel class="flex">
+            <paper-toolbar class="not-ready" bind-class="{ not-ready: view.isNotVisible }" justify="start">
+                <iron-icon icon="communication:chat"></iron-icon>
+                <template id="header-status" src="header-status.html" replace poly-parent="paper-toolbar"></template>
+            </paper-toolbar>
+            <div class="fit">
+                <template id="message-list" replace>
+                    <ul class="messages" scope-id="view.messageListElement">
+                        <template bind-repeat="message in view.currentMessages">
+                            <li class="{{message.inOrOut}}">
+                                <paper-card elevation="1">{{message.body}}</paper-card>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+            </div>
+        </paper-header-panel>
+        <template id="bottom-input" src="./bottom-input.html" replace></template>
+    </div>
+</template>

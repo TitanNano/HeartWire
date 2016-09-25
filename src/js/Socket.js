@@ -18,6 +18,10 @@ let Socket = {
     _decelerateTimeout: 0,
     _decelerateMaxTimeout: 30,
 
+    _onceQueue: null,
+    _listeners: null,
+    _connectedHandler: null,
+
     get isConnected() {
         return this._connected;
     },
@@ -55,6 +59,12 @@ let Socket = {
 
         this.isOnline = navigator.onLine;
 
+        // bind event listeners to Object.
+        this._onSocketClosed = this._onSocketClosed.bind(this);
+        this._onMessage = this._onMessage.bind(this);
+        this._onSocketError = this._onSocketError.bind(this);
+        this._onSocketOpen = this._onSocketOpen.bind(this);
+
         window.addEventListener('online', () => {
             this.isOnline = navigator.onLine;
             console.log('Socket: online');
@@ -77,7 +87,7 @@ let Socket = {
 
     _onMessage: function(message) {
         message = JSON.parse(message.data);
-        console.log('Socket: new message received', message.type);
+        console.log('Socket: new message received', message.type, message);
 
         if (message.type.search('ack') < 0) {
             this._ack(message.id);
@@ -89,7 +99,7 @@ let Socket = {
         }
 
         if (this._listeners[message.type]) {
-            this._listeners.forEach(fn => fn(message));
+            this._listeners[message.type].forEach(fn => fn(message));
         }
     },
 
@@ -97,45 +107,87 @@ let Socket = {
         this._onStatusChange.forEach(fn => fn());
     },
 
-    _onceQueue: null,
-    _listeners: null,
-    _connectedHandler: null,
-
     sendMessage: function(type, message) {
-        let data = {
-            id: uuid.v5('0', window.performance.now()),
-            data: message,
-            type: type,
-        };
+        if (this.isConnected) {
+            let data = {
+                id: uuid.v5('0', window.performance.now().toString()),
+                data: message,
+                type: type,
+            };
 
-        let promise = new Promise((success, failure) => {
-        /**    let timeoutId = setTimeout(() => {
-                console.warn('Socket: connection timed out! dropping connection!');
-                this.reconnect();
-                failure();
-            }, 10000); */
+            let promise = new Promise((success, failure) => {
 
-/**            this.once(`ack:${data.id}`, () => {
-                clearTimeout(timeoutId);
-            });*/
+                // wait for 10s before the connection times out
+                let timeoutId = setTimeout(() => {
+                    console.warn('Socket: connection timed out! dropping connection!');
+                    failure();
+                }, 10000);
 
-            this.once(`response:${data.id}`, message => {
-                success(message);
+                // clear the time out once we know the server got yout message.
+                this.once(`ack:${data.id}`, () => {
+                    clearTimeout(timeoutId);
+                });
+
+                // the server processed our message!
+                this.once(`response:${data.id}`, message => {
+                    success(message);
+                });
             });
-        });
 
-        promise.catch(() => this.reconnect());
+            // promise.catch(() => this.reconnect());
 
-        console.log('Socket: message sent', data.id);
-        this._websocket.send(JSON.stringify(data));
+            console.log('Socket: message sent', data.type, data);
+            this._websocket.send(JSON.stringify(data));
 
-        return promise;
+            return promise;
+        } else {
+            return Promise.reject('disconnected');
+        }
     },
 
     reconnect: function() {
         if (this.isConnected) {
             this._websocket.close();
         }
+    },
+
+    /**
+     * Callback for when the socket disconnected. A reconnect is scheduled emediately.
+     *
+     * @callback
+     *
+     * @return {void}
+     */
+    _onSocketClosed() {
+        // socket closed restart
+        this._hostId += 1;
+        this._decelerateTimeout += 1;
+
+        if (this._hostId > this._host.length - 1) {
+            this._hostId = 0;
+        }
+
+        if (this._decelerateTimeout > this._decelerateMaxTimeout) {
+            this._decelerateTimeout = this._decelerateMaxTimeout;
+        }
+
+        console.warn(`websocket disconnected! Retry in ${this._decelerateTimeout}s to ${this._host[this._hostId]}`);
+        this.isConnected = false;
+        this.init();
+    },
+
+    _onSocketError(error) {
+        console.error('websocket error:', error);
+        this.isConnecting = false;
+    },
+
+    _onSocketOpen() {
+        this.isConnected = true;
+        this.isConnecting = false;
+        this._decelerateTimeout = 0;
+        console.log('connection established!');
+
+        this._connectedHandler.forEach(fn => fn());
     },
 
     init: function() {
@@ -145,41 +197,12 @@ let Socket = {
             this._decelerate = setTimeout(() => {
                 console.log('trying to establish a connection...');
                 this._decelerate = null;
-                this._websocket = new WebSocket(`ws://${this._host[this._hostId]}`);
+                this._websocket = new WebSocket(this._host[this._hostId], 'hwp-1.0');
 
-                this._websocket.onopen = () => {
-                    this.isConnected = true;
-                    this.isConnecting = false;
-                    this._decelerateTimeout = 0;
-                    console.log('connection established!');
-
-                    this._connectedHandler.forEach(fn => fn());
-                }
-
-                this._websocket.onerror = function(error) {
-                    console.error('websocket error:', error);
-                    this.isConnecting = false;
-                }
-
-                this._websocket.onclose = () => {
-                    // socket closed restart
-                    this._hostId += 1;
-                    this._decelerateTimeout += 1;
-
-                    if (this._hostId > this._host.length - 1) {
-                        this._hostId = 0;
-                    }
-
-                    if (this._decelerateTimeout > this._decelerateMaxTimeout) {
-                        this._decelerateTimeout = this._decelerateMaxTimeout;
-                    }
-
-                    console.warn(`websocket disconnected! Retry in ${this._decelerateTimeout}s to ${this._host[this._hostId]}`);
-                    this.isConnected = false;
-                    this.init();
-                }
-
-                this._websocket.onmessage = this._onMessage.bind(this);
+                this._websocket.onopen = this._onSocketOpen;
+                this._websocket.onerror = this._onSocketError;
+                this._websocket.onclose = this._onSocketClosed;
+                this._websocket.onmessage = this._onMessage;
             }, this._decelerateTimeout * 1000);
         }
 

@@ -2,6 +2,12 @@
     "name": "HeartWire",
     "description": "direct messaging app",
     "launch_path": "/index.html",
+    "type": "web",
+    "developer": {
+        "name": "Jovan Gerodetti",
+        "url": "https://blog.titannano.de"
+    },
+    "default_locale": "en",
     "permissions": {
         "push": {
             "description": "required to wake up the app."
@@ -14,5 +20,10 @@
     "messages": [
         { "push": "/index.html"},
         { "push-register": "/index.html"}
-    ]
+    ],
+    "icons": {
+        "128": "/icons/heartwire_round.svg",
+        "512": "/icons/heartwire_round.svg"
+    },
+    "orientation": "portrait"
 }

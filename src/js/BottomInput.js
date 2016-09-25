@@ -1,15 +1,18 @@
 import DataBinding from '../af/modules/DataBinding.js';
+import MessageManager from './MessageManager.js';
 
 let BottomInput = {
     currentDraft: '',
 
     get inputValue() {
-        return this.inputFocused || this.currentDraft.length > 0 ?
-            this.currentDraft : (this.inputElement && this.inputElement.getAttribute('placeholder'));
+        return this.currentDraft.length > 0 ? this.currentDraft : '<br>';
+
+        // return this.inputFocused || this.currentDraft.length > 0 ?
+        //    this.currentDraft : (this.inputElement && this.inputElement.getAttribute('placeholder'));
     },
 
     set inputValue(value) {
-        this.currentDraft = value;
+        this.currentDraft = value.replace(/(^<br>|<br>)$/g, '');
     },
 
     inputFocused: false,
@@ -27,10 +30,22 @@ let BottomInput = {
         this.__apply__(null, true);
     },
 
-    scope: null,
+    sendMessage() {
+        let messageText = this.view.inputValue;
 
-    _make: function() {
-        this.scope = DataBinding.makeTemplate('#bottom-input', { view: this });
+        MessageManager.sendMessage('text', messageText, this.view._account.partner)
+            .then(() => {
+                this.view.currentDraft = '';
+                this.__apply__();
+            });
+    },
+
+    _scope: null,
+    _account: null,
+
+    _make(account) {
+        this._account = account;
+        this._scope = DataBinding.makeTemplate('#bottom-input', { view: this });
     }
 }
 

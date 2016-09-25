@@ -1,22 +1,41 @@
-import { Make } from '../af/util/make.js';
+import EventTarget from '../af/core/prototypes/EventTarget';
 
-let ScreenManager = Make(/** @lends ScreenManager */{
+/** @lends ScreenManager */
+let ScreenManager = {
 
     applicationIsActive: false,
 
-    _make: function() {
+    constructor() {
+        super._make.apply(this);
+
         this.applicationIsActive = !document.hidden;
 
         document.addEventListener('visibilitychange', () => {
             this.applicationIsActive = !document.hidden;
 
-            console.log('application is ', this.applicationIsActive ? 'active' : 'inactive', 'now');
+            this.applicationIsActive ? this.emit('active') : this.emit('inactive');
+
+            console.log('application is', this.applicationIsActive ? 'active' : 'inactive', 'now');
         });
 
         document.addEventListener('resume', (e) => {
             console.log('application has resumed', e);
         });
-    }
-})();
 
-export default ScreenManager;
+        return this;
+    },
+
+    updateThemeColor(color) {
+        const colorSet = {
+            'blue': '#2196f3',
+            'pink': '#e91e63',
+            'green': '#4caf50',
+        };
+
+        document.head.querySelector('meta[name="theme-color"]').content = colorSet[color];
+    },
+
+    __proto__: EventTarget,
+};
+
+export default ScreenManager.constructor();

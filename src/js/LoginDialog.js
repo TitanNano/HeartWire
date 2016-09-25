@@ -27,8 +27,13 @@ const LoginDialog = {
     username: '',
     password: '',
 
-    usernameError: '',
-    passwordError: '',
+    get lastError() {
+        return this._account.lastError;
+    },
+
+    get hasError() {
+        return !!this._account.lastError;
+    },
 
     get isOpen() {
         return (!this._account.credentialsReady || this.active);
@@ -55,10 +60,10 @@ const LoginDialog = {
         }
     },
 
-    getErrorMessage(element, error) {
+    getErrorMessage(element) {
         element = element.querySelector('input');
 
-        return element.validationMessage || error;
+        return element.validationMessage;
     },
 
     preventDefault: function(event) {

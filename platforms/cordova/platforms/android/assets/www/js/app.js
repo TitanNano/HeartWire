@@ -86,63 +86,97 @@
 	    value: true
 	});
 	
-	var _make2 = __webpack_require__(2);
+	var _obj;
 	
-	var _Application = __webpack_require__(3);
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
+	var _make = __webpack_require__(2);
+	
+	var _Account = __webpack_require__(3);
+	
+	var _Account2 = _interopRequireDefault(_Account);
+	
+	var _Application = __webpack_require__(10);
 	
 	var _Application2 = _interopRequireDefault(_Application);
 	
-	var _BottomInput = __webpack_require__(7);
+	var _ChatView = __webpack_require__(14);
 	
-	var _BottomInput2 = _interopRequireDefault(_BottomInput);
+	var _ChatView2 = _interopRequireDefault(_ChatView);
 	
-	var _Header = __webpack_require__(30);
+	var _CryptoProxy = __webpack_require__(44);
 	
-	var _Header2 = _interopRequireDefault(_Header);
+	var _CryptoProxy2 = _interopRequireDefault(_CryptoProxy);
 	
-	var _MessageList = __webpack_require__(31);
+	var _LoginDialog = __webpack_require__(48);
 	
-	var _MessageList2 = _interopRequireDefault(_MessageList);
+	var _LoginDialog2 = _interopRequireDefault(_LoginDialog);
 	
-	var _PushManager = __webpack_require__(32);
+	var _MessageManager = __webpack_require__(42);
+	
+	var _MessageManager2 = _interopRequireDefault(_MessageManager);
+	
+	var _PushManager = __webpack_require__(49);
 	
 	var _PushManager2 = _interopRequireDefault(_PushManager);
 	
-	var _ScreenManager = __webpack_require__(33);
+	var _ScreenManager = __webpack_require__(5);
 	
 	var _ScreenManager2 = _interopRequireDefault(_ScreenManager);
 	
-	var _Socket = __webpack_require__(34);
+	var _Socket = __webpack_require__(50);
 	
 	var _Socket2 = _interopRequireDefault(_Socket);
 	
+	var _Storage = __webpack_require__(6);
+	
+	var _Storage2 = _interopRequireDefault(_Storage);
+	
+	var _SyncDialog = __webpack_require__(52);
+	
+	var _SyncDialog2 = _interopRequireDefault(_SyncDialog);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var application = (0, _make2.Make)({
+	var application = Object.create(_obj = {
 	    name: 'HeartWire',
 	
-	    pushManager: null,
 	    socket: null,
 	
 	    headerController: null,
 	    bottomInputController: null,
 	    messageListController: null,
+	    loginDialog: null,
+	    storage: _Storage2.default,
 	
-	    _make: function _make() {
-	        this.pushManager = _PushManager2.default;
-	        this.socket = (0, _make2.Make)(_Socket2.default)({ host: ['localhost:5000', '192.168.44.210:5000'] });
+	    constructor: function constructor() {
+	        _get(_obj.__proto__ || Object.getPrototypeOf(_obj), '_make', this).call(this);
+	
 	        this.sreeenManager = _ScreenManager2.default;
-	        this.headerController = (0, _make2.Make)(_Header2.default)(this);
-	        this.bottomInputController = (0, _make2.Make)(_BottomInput2.default)();
-	        this.messageListController = (0, _make2.Make)(_MessageList2.default)();
+	
+	        this.socket = (0, _make.Make)(_Socket2.default)({
+	            host: ['ws://localhost:5000/socket', 'ws://192.168.44.231:5000/socket', 'ws://192.168.178.25:5000/socket']
+	        });
+	
+	        this.account = (0, _make.Make)(_Account2.default)(this.socket);
+	
+	        this.chatView = (0, _make.Make)(_ChatView2.default)(this, this.account);
+	        this.loginDialog = (0, _make.Make)(_LoginDialog2.default)(this.account);
+	        this.syncDialog = (0, _make.Make)(_SyncDialog2.default)();
+	
+	        _MessageManager2.default.init(this.account, this.socket);
+	
+	        return this;
+	    },
+	    init: function init() {
+	        _PushManager2.default.init();
+	        _CryptoProxy2.default.init(this.account, this.socket);
 	    },
 	
-	    init: function init() {
-	        this.pushManager.init();
-	        this.socket.init();
-	    }
 	
-	}, _Application2.default)();
+	    __proto__: _Application2.default
+	
+	}).constructor();
 	
 	exports.default = application;
 
@@ -313,13 +347,894 @@
 	    value: true
 	});
 	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
 	var _make2 = __webpack_require__(2);
 	
-	var _Thread = __webpack_require__(4);
+	var _EventTarget = __webpack_require__(4);
+	
+	var _EventTarget2 = _interopRequireDefault(_EventTarget);
+	
+	var _ScreenManager = __webpack_require__(5);
+	
+	var _ScreenManager2 = _interopRequireDefault(_ScreenManager);
+	
+	var _Storage = __webpack_require__(6);
+	
+	var _Storage2 = _interopRequireDefault(_Storage);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Account = (0, _make2.Make)( /** @lends Account# */{
+	
+	    /**
+	     * [_socket description]
+	     *
+	     * @type {Socket}
+	     */
+	    _socket: null,
+	    _userData: null,
+	    _partnerData: null,
+	
+	    credentialsReady: false,
+	    busy: false,
+	    lastError: '',
+	
+	    get isReady() {
+	        return !!this._userData;
+	    },
+	
+	    get partner() {
+	        return this._userData.partner;
+	    },
+	
+	    get id() {
+	        return this._userData._id;
+	    },
+	
+	    get color() {
+	        return this._userData && this._userData.color;
+	    },
+	
+	    _make: function _make(socket) {
+	        var _this = this;
+	
+	        _EventTarget2.default._make.apply(this);
+	
+	        var _credentials = _slicedToArray(this._credentials, 2);
+	
+	        var username = _credentials[0];
+	        var password = _credentials[1];
+	
+	
+	        this._socket = socket;
+	
+	        if (username && password) {
+	            this.credentialsReady = true;
+	            this._socket.init();
+	        }
+	
+	        if (username) {
+	            _Storage2.default.getUserDataByUserName(username).then(function (user) {
+	                if (user && !_this._userData) {
+	                    _this._userData = user;
+	
+	                    _this.emit('ready');
+	                }
+	            });
+	        }
+	
+	        this._socket.connected(this._socketConnected.bind(this));
+	        _ScreenManager2.default.on('active', this._userIsOnline.bind(this));
+	        _ScreenManager2.default.on('inactive', this._userIsAway.bind(this));
+	    },
+	    _loadPartner: function _loadPartner() {
+	        var _this2 = this;
+	
+	        _Storage2.default.getUserDataById(this._userData.partner).then(function (user) {
+	            if (!_this2._partnerData) {
+	                _this2._partnerData = user;
+	                _this2.emit('change');
+	            }
+	        });
+	
+	        this._socket.sendMessage('account.partner').then(function (_ref) {
+	            var partner = _ref.data;
+	
+	            _Storage2.default.setUserData(partner);
+	            _this2._partnerData = partner;
+	            _this2.emit('change');
+	        });
+	    },
+	    _socketConnected: function _socketConnected() {
+	        var _credentials2 = _slicedToArray(this._credentials, 2);
+	
+	        var username = _credentials2[0];
+	        var password = _credentials2[1];
+	
+	
+	        if (username && password) {
+	            this._socket.sendMessage('authentication', {
+	                username: username,
+	                password: password
+	            }).then(function (response) {
+	                if (response.data.error) {
+	                    return Promise.reject(response);
+	                } else {
+	                    return response;
+	                }
+	            }).then(this._authSuccess.bind(this)).catch(this._authError.bind(this));
+	        }
+	    },
+	    _authSuccess: function _authSuccess(_ref2) {
+	        var user = _ref2.data;
+	
+	        var wasReady = !!this._userData;
+	        console.log('Account: user ', user, 'sucessfully logged in');
+	
+	        this._userData = user;
+	        this.busy = false;
+	
+	        _Storage2.default.setUserData(user);
+	        this._loadPartner();
+	
+	        if (_ScreenManager2.default.applicationIsActive) {
+	            this._userIsOnline();
+	        }
+	
+	        this.emit('statusChange');
+	        this.emit('change');
+	        console.log('account listeners:', JSON.stringify(this._listeners.authenticated));
+	        this.emit('authenticated');
+	
+	        if (!wasReady) {
+	            this.emit('ready');
+	        }
+	    },
+	    _authError: function _authError(error) {
+	        console.error('login faild! reason:', error.data.reason);
+	
+	        this.credentialsReady = false;
+	        this.busy = false;
+	        this.lastError = error.data.reason;
+	        window.localStorage.removeItem('heartwire.username');
+	        window.localStorage.removeItem('heartwire.password');
+	        this._socket.disconnect();
+	        this.emit('statusChange');
+	    },
+	    _userIsOnline: function _userIsOnline() {
+	        var _this3 = this;
+	
+	        if (this._userData) {
+	            this._socket.sendMessage('account.online', true).then(function (_ref3) {
+	                var userData = _ref3.data;
+	
+	                _this3._userData = userData;
+	            });
+	        }
+	    },
+	    _userIsAway: function _userIsAway() {
+	        var _this4 = this;
+	
+	        if (this._userData) {
+	            this._socket.sendMessage('account.online', false).then(function (_ref4) {
+	                var userData = _ref4.data;
+	
+	                _this4._userData = userData;
+	            });
+	        }
+	    },
+	
+	
+	    /**
+	     * [authenticate description]
+	     *
+	     * @param  {string} username [description]
+	     * @param  {string} password [description]
+	     *
+	     * @return {Promise}          [description]
+	     */
+	    authenticate: function authenticate(username, password) {
+	        password = btoa(password);
+	
+	        window.localStorage.setItem('heartwire.username', username);
+	        window.localStorage.setItem('heartwire.password', password);
+	
+	        this.credentialsReady = true;
+	        this.busy = true;
+	        this.lastError = '';
+	        this._socket.init();
+	    },
+	
+	    get _credentials() {
+	        var username = window.localStorage.getItem('heartwire.username');
+	        var password = window.localStorage.getItem('heartwire.password');
+	
+	        return [username, password];
+	    },
+	
+	    setSyncChallenge: function setSyncChallenge(value) {
+	        var _this5 = this;
+	
+	        return this._socket.sendMessage('account.syncChallenge', {
+	            syncChallenge: value
+	        }).then(function (_ref5) {
+	            var user = _ref5.data;
+	
+	            _this5._userData = user;
+	        }).catch(function (e) {
+	            return console.log(e.data.error + ':', e.data.reason);
+	        });
+	    },
+	
+	    checkSyncChanllenge: function checkSyncChanllenge() {
+	        return this._userData.syncChallenge;
+	    },
+	
+	    getPartner: function getPartner() {
+	        return this._partnerData;
+	    }
+	}, _EventTarget2.default).get();
+	
+	exports.default = Account;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	/** @lends EventTarget# */
+	var EventTarget = {
+	
+	    /** @type {Object} */
+	    _listeners: null,
+	
+	    /**
+	     * @constructs
+	     *
+	     * @return {void}
+	     */
+	    _make: function _make() {
+	        this._listeners = {};
+	    },
+	
+	    /**
+	     * registers a new listener for the given event.
+	     *
+	     * @param {string} type the type of event
+	     * @param {function} listener callback to execute when the event fires
+	     *
+	     * @return {void}
+	     */
+	    on: function on(type, listener) {
+	        if (!this._listeners[type]) {
+	            this._listeners[type] = [];
+	        }
+	
+	        this._listeners[type].push(listener);
+	    },
+	
+	    /**
+	     * emmits a new event on this object
+	     *
+	     * @param {string} type the type of event
+	     * @param {*} data data to send to the callbacks
+	     *
+	     * @return {void}
+	     */
+	    emit: function emit(type, data) {
+	        var _this = this;
+	
+	        if (this._listeners[type]) {
+	            setTimeout(function () {
+	                return _this._listeners[type].forEach(function (listener) {
+	                    return listener.apply(_this, [data]);
+	                });
+	            }, 0);
+	        }
+	    }
+	};
+	
+	exports.default = EventTarget;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _make2 = __webpack_require__(2);
+	
+	var _EventTarget = __webpack_require__(4);
+	
+	var _EventTarget2 = _interopRequireDefault(_EventTarget);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ScreenManager = (0, _make2.Make)( /** @lends ScreenManager */{
+	
+	    applicationIsActive: false,
+	
+	    _make: function _make() {
+	        var _this = this;
+	
+	        _EventTarget2.default._make.apply(this);
+	
+	        this.applicationIsActive = !document.hidden;
+	
+	        document.addEventListener('visibilitychange', function () {
+	            _this.applicationIsActive = !document.hidden;
+	
+	            _this.applicationIsActive ? _this.emit('active') : _this.emit('inactive');
+	
+	            console.log('application is', _this.applicationIsActive ? 'active' : 'inactive', 'now');
+	        });
+	
+	        document.addEventListener('resume', function (e) {
+	            console.log('application has resumed', e);
+	        });
+	    }
+	}, _EventTarget2.default)();
+	
+	exports.default = ScreenManager;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
+	var _make = __webpack_require__(2);
+	
+	var _IndexedDB = __webpack_require__(7);
+	
+	var _IndexedDB2 = _interopRequireDefault(_IndexedDB);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var db = (0, _make.Make)(_IndexedDB2.default)('HeartWireStorage');
+	var MAGIC_CHUNK_SIZE = 20;
+	
+	db.define(1).store({
+	    name: 'messages',
+	    keyPath: '_id',
+	    unique: true
+	}).index('userMessagesOut', ['date', 'to', '_id']).index('userMessagesIn', ['date', 'from', '_id']).store({
+	    name: 'users',
+	    keyPath: '_id',
+	    unique: true
+	}).index('userName', 'userName').index('userId', '_id');
+	
+	window.db = db;
+	
+	var Storage = {
+	    getMessages: function getMessages(userId, afterMessageId) {
+	        if (!afterMessageId) {
+	            return db.read('messages').where('userMessagesIn').equals([null, userId, null]).or('userMessagesOut').to([null, userId, null]).sort('DESC').get(MAGIC_CHUNK_SIZE).catch(function (e) {
+	                return console.error(e);
+	            });
+	        } else {
+	            return db.read('messages').where('userMessagesIn').equals([null, userId, null]).lowerThan([null, null, afterMessageId]).or('userMessagesOut').equals([null, userId, null]).lowerThan([null, null, afterMessageId]).sort('DESC').get(MAGIC_CHUNK_SIZE).catch(function (e) {
+	                return console.log(e);
+	            });
+	        }
+	    },
+	    getUserDataById: function getUserDataById(userId) {
+	        return db.read('users').where('userId').equals(userId).get().then(function (_ref) {
+	            var _ref2 = _slicedToArray(_ref, 1);
+	
+	            var user = _ref2[0];
+	            return user;
+	        });
+	    },
+	    getUserDataByUserName: function getUserDataByUserName(userName) {
+	        return db.read('users').where('userName').equals(userName).get().then(function (_ref3) {
+	            var _ref4 = _slicedToArray(_ref3, 1);
+	
+	            var user = _ref4[0];
+	            return user;
+	        }).catch(function (e) {
+	            return console.error(e);
+	        });
+	    },
+	    setUserData: function setUserData(data) {
+	        return db.write('users', data).catch(function (e) {
+	            return console.error(e);
+	        });
+	    },
+	
+	
+	    /**
+	     * @param {Message} message []
+	     *
+	     * @returns {Promise<*>} []
+	     */
+	    storeMessage: function storeMessage(message) {
+	        return db.write('messages', message).catch(function (e) {
+	            return console.error(e);
+	        });
+	    }
+	};
+	
+	exports.default = Storage;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _make2 = __webpack_require__(2);
+	
+	var _IndexedQueryCompiler = __webpack_require__(8);
+	
+	var _IndexedQueryCompiler2 = _interopRequireDefault(_IndexedQueryCompiler);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 * @module IndexedDB
+	 */
+	
+	var IndexedStoreDefinition = {
+	    name: '',
+	    indexes: null,
+	
+	    _make: function _make(info) {
+	        this.description = info;
+	        this.indexes = [];
+	    }
+	};
+	
+	var IndexedDefinition = {
+	    _version: 0,
+	
+	    /** @type {IndexedStoreDefinition} */
+	    _currentStore: null,
+	
+	    /** @type {IndexedStoreDefinition[]} */
+	    _allStores: null,
+	
+	    _make: function _make(version) {
+	        this._version = version;
+	        this._allStores = [];
+	    },
+	
+	    store: function store(info) {
+	        if (this._currentStore) {
+	            this._allStores.push(this._currentStore);
+	        }
+	
+	        if (typeof info === 'string') {
+	            info = { name: info };
+	        }
+	
+	        this._currentStore = (0, _make2.Make)(IndexedStoreDefinition)(info);
+	
+	        return this;
+	    },
+	
+	    index: function index(name, members, options) {
+	        this._currentStore.indexes.push({
+	            name: name,
+	            members: members,
+	            options: options
+	        });
+	
+	        return this;
+	    },
+	
+	    _execute: function _execute(db, transaction) {
+	        if (this._currentStore) {
+	            this._allStores.push(this._currentStore);
+	        }
+	
+	        this._allStores.forEach(function (storeDefinition) {
+	            var store = null;
+	
+	            try {
+	                store = transaction.objectStore(storeDefinition.name);
+	            } catch (e) {
+	                if (e.name === 'NotFoundError') {
+	                    store = db.createObjectStore(storeDefinition.description.name, storeDefinition.description);
+	                } else {
+	                    console.error(e);
+	                }
+	            }
+	
+	            storeDefinition.indexes.forEach(function (index) {
+	                try {
+	                    store.createIndex(index.name, index.members, index.options);
+	                } catch (e) {
+	                    if (e.name === 'ConstraintError') {
+	                        store.deleteIndex(index.name);
+	                        store.createIndex(index.name, index.members, index.options);
+	                    } else {
+	                        console.error(e);
+	                    }
+	                }
+	            });
+	        });
+	    }
+	};
+	
+	var IndexedDB = {
+	    _name: '',
+	
+	    /**
+	     * [_definitions description]
+	     *
+	     * @type {Function[]}
+	     */
+	    _definitions: null,
+	
+	    _setup: function _setup(success, failure) {
+	        var _this = this;
+	
+	        var request = window.indexedDB.open(this._name, this._definitions.length - 1);
+	
+	        request.onsuccess = function (event) {
+	            return success(event.target.result);
+	        };
+	        request.onerror = failure;
+	        request.onupgradeneeded = function (_ref) {
+	            var lastVersion = _ref.oldVersion;
+	            var _ref$target = _ref.target;
+	            var db = _ref$target.result;
+	            var transaction = _ref$target.transaction;
+	
+	            for (var i = lastVersion + 1; i < _this._definitions.length; i++) {
+	                var setup = _this._definitions[i];
+	
+	                setup._execute(db, transaction);
+	            }
+	        };
+	    },
+	
+	    _make: function _make(name) {
+	        var _this2 = this;
+	
+	        this._name = name;
+	        this._definitions = [];
+	
+	        this._promise = new Promise(function (success, failure) {
+	            setTimeout(_this2._setup.bind(_this2, success, failure), 0);
+	        });
+	    },
+	
+	    define: function define(version) {
+	        this._definitions[version] = (0, _make2.Make)(IndexedDefinition)(version);
+	
+	        return this._definitions[version];
+	    },
+	
+	    read: function read(storeName) {
+	        return (0, _make2.Make)(_IndexedQueryCompiler2.default)(storeName, this._promise);
+	    },
+	
+	    write: function write(storeName, value) {
+	        return this._promise.then(function (db) {
+	            return new Promise(function (success, failure) {
+	                try {
+	                    var request = db.transaction([storeName], 'readwrite').objectStore(storeName).put(value);
+	
+	                    request.onsuccess = function (event) {
+	                        return success(event.target.result);
+	                    };
+	                    request.onerror = failure;
+	                } catch (e) {
+	                    failure(e);
+	                }
+	            });
+	        });
+	    }
+	};
+	
+	exports.default = IndexedDB;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _make2 = __webpack_require__(2);
+	
+	var _ArrayUtil = __webpack_require__(9);
+	
+	var _ArrayUtil2 = _interopRequireDefault(_ArrayUtil);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 * A query object for an indexedDB request.
+	 *
+	 * @lends module:IndexedDB.IndexedQuery#
+	 */
+	var IndexedQuery = {
+	    /** @type {string} */
+	    name: '',
+	
+	    /** @type {*} */
+	    rangeStart: null,
+	
+	    /** @type {*} */
+	    rangeEnd: null
+	};
+	
+	/**
+	 * the query compiler for indexedDB requests.
+	 *
+	 * @lends module:IndexedDB.IndexedQueryCompiler#
+	 */
+	var IndexedQueryCompiler = {
+	    /** @type {IndexedQuery} */
+	    _currentQuery: null,
+	
+	    /** @type {IndexedQuery[]} */
+	    _allQueries: null,
+	    _store: '',
+	    _db: null,
+	    sortOrder: 'next',
+	
+	    _make: function _make(storeName, db) {
+	        this._allQueries = [];
+	        this._store = storeName;
+	        this._db = db;
+	    },
+	
+	    _transformExclude: function _transformExclude(value, exclude) {
+	        if (Array.isArray(value)) {
+	            value = value.map(function (item) {
+	                return { value: item, exclude: exclude };
+	            });
+	        } else {
+	            value = { value: value, exclude: exclude };
+	        }
+	
+	        return value;
+	    },
+	
+	    where: function where(indexName) {
+	        this._currentQuery = (0, _make2.Make)(IndexedQuery)();
+	        this._currentQuery.name = indexName;
+	
+	        return this;
+	    },
+	
+	    equals: function equals(value) {
+	        this.from(value).to(value);
+	
+	        return this;
+	    },
+	
+	    from: function from(value) {
+	        var exclude = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+	
+	        value = this._transformExclude(value, exclude);
+	
+	        if (Array.isArray(this._currentQuery.rangeStart)) {
+	            this._currentQuery.rangeStart = _ArrayUtil2.default.assignEmpty(this._currentQuery.rangeStart, value);
+	        } else {
+	            this._currentQuery.rangeStart = value;
+	        }
+	
+	        return this;
+	    },
+	
+	    to: function to(value) {
+	        var exclude = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+	
+	        value = this._transformExclude(value, exclude);
+	
+	        if (Array.isArray(this._currentQuery.rangeEnd)) {
+	            this._currentQuery.rangeEnd = _ArrayUtil2.default.assignEmpty(this._currentQuery.rangeEnd, value);
+	        } else {
+	            this._currentQuery.rangeEnd = value;
+	        }
+	
+	        return this;
+	    },
+	
+	    lowerThan: function lowerThan(value) {
+	        this.to(value, true);
+	
+	        return this;
+	    },
+	
+	    higherThan: function higherThan(value) {
+	        this.from(value, true);
+	
+	        return this;
+	    },
+	
+	    or: function or(indexName) {
+	        this._allQueries.push(this._currentQuery);
+	        this.where(indexName);
+	
+	        return this;
+	    },
+	
+	    sort: function sort(direction) {
+	        if (direction === 'ASC') {
+	            this.sortOrder = 'next';
+	        } else if (direction === 'DESC') {
+	            this.sortOrder = 'prev';
+	        }
+	
+	        return this;
+	    },
+	
+	    get: function get() {
+	        for (var _len = arguments.length, limit = Array(_len), _key = 0; _key < _len; _key++) {
+	            limit[_key] = arguments[_key];
+	        }
+	
+	        if (limit.length === 1) {
+	            limit.unshift(0);
+	        }
+	
+	        this._allQueries.push(this._currentQuery);
+	        this._currentQuery = null;
+	
+	        return this._execute(limit);
+	    },
+	
+	    _execute: function _execute(start, end) {
+	        var _this = this;
+	
+	        return this._db.then(function (db) {
+	            var matches = [];
+	            var results = [];
+	
+	            return Promise.all(_this._allQueries.map(function (query) {
+	                return new Promise(function (done, error) {
+	                    var store = db.transaction([_this._store], 'readonly').objectStore(_this._store);
+	                    var range = null;
+	                    var rangeArray = Array.isArray(query.rangeStart) || Array.isArray(query.rangeEnd);
+	
+	                    if (!rangeArray) {
+	                        if (query.rangeStart && query.rangeEnd) {
+	                            range = IDBKeyRange.bound(query.rangeStart.value, query.rangeEnd.value, query.rangeStart.exclude, query.rangeEnd.exclude);
+	                        } else if (query.rangeStart) {
+	                            range = IDBKeyRange.lowerBound(query.rangeStart.value, query.rangeStart.exclude);
+	                        } else {
+	                            range = IDBKeyRange.upperBound(query.rangeEnd.value, query.rangeEnd.exclude);
+	                        }
+	                    }
+	
+	                    var request = store.index(query.name).openCursor(range, _this.sortOrder);
+	
+	                    request.onsuccess = function (_ref) {
+	                        var cursor = _ref.target.result;
+	
+	                        if (!cursor) {
+	                            return done();
+	                        }
+	
+	                        if (matches.indexOf(JSON.stringify(cursor.primaryKey)) < 0) {
+	                            var doesMatch = true;
+	                            var keyCount = query.rangeStart && query.rangeStart.length || query.rangeEnd && query.rangeEnd.length;
+	
+	                            if (start > 0) {
+	                                start -= 1;
+	                                end -= 1;
+	                                return cursor.continue();
+	                            } else if (start === 0 && end > 0) {
+	                                end -= 1;
+	                            } else if (start === 0 && end === 0) {
+	                                return done();
+	                            }
+	
+	                            if (rangeArray) {
+	                                for (var i = 0; i < keyCount; i++) {
+	                                    if (query.rangeStart && query.rangeStart[i].value !== null) {
+	                                        if (query.rangeStart[i].exclude) {
+	                                            doesMatch = doesMatch && cursor.key[i] > query.rangeStart[i].value;
+	                                        } else {
+	                                            doesMatch = doesMatch && cursor.key[i] >= query.rangeStart[i].value;
+	                                        }
+	                                    }
+	
+	                                    if (query.rangeEnd && query.rangeEnd[i].value !== null) {
+	                                        if (query.rangeEnd.exclude) {
+	                                            doesMatch = doesMatch && cursor.key[i] < query.rangeEnd[i].value;
+	                                        } else {
+	                                            doesMatch = doesMatch && cursor.key[i] <= query.rangeEnd[i].value;
+	                                        }
+	                                    }
+	                                }
+	                            }
+	
+	                            if (doesMatch) {
+	                                results.push(cursor.value);
+	                                matches.push(cursor.primaryKey);
+	                            }
+	
+	                            return cursor.continue();
+	                        }
+	                    };
+	
+	                    request.onerror = error;
+	                });
+	            })).then(function () {
+	                return results;
+	            });
+	        });
+	    }
+	};
+	
+	exports.default = IndexedQueryCompiler;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var ArrayUtil = {
+	    assignEmpty: function assignEmpty(target) {
+	        for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	            sources[_key - 1] = arguments[_key];
+	        }
+	
+	        sources.forEach(function (source) {
+	            Array.prototype.forEach.apply(source, function (item, index) {
+	                if (target[index] === null || target[index] === undefined) {
+	                    target[index] = item;
+	                }
+	            });
+	        });
+	
+	        return target;
+	    }
+	};
+	
+	exports.default = ArrayUtil;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _make2 = __webpack_require__(2);
+	
+	var _Thread = __webpack_require__(11);
 	
 	var _Thread2 = _interopRequireDefault(_Thread);
 	
-	var _ApplicationInternal = __webpack_require__(6);
+	var _ApplicationInternal = __webpack_require__(13);
 	
 	var _ApplicationInternal2 = _interopRequireDefault(_ApplicationInternal);
 	
@@ -459,7 +1374,7 @@
 	exports.default = Application;
 
 /***/ },
-/* 4 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -468,7 +1383,7 @@
 	    value: true
 	});
 	
-	var _Shared = __webpack_require__(5);
+	var _Shared = __webpack_require__(12);
 	
 	var _Shared2 = _interopRequireDefault(_Shared);
 	
@@ -536,7 +1451,7 @@
 	exports.default = Thread;
 
 /***/ },
-/* 5 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -552,7 +1467,7 @@
 	exports.default = {};
 
 /***/ },
-/* 6 */
+/* 13 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -601,7 +1516,7 @@
 	exports.default = ApplicationInternal;
 
 /***/ },
-/* 7 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -610,7 +1525,87 @@
 	    value: true
 	});
 	
-	var _DataBinding = __webpack_require__(8);
+	var _make2 = __webpack_require__(2);
+	
+	var _BottomInput = __webpack_require__(15);
+	
+	var _BottomInput2 = _interopRequireDefault(_BottomInput);
+	
+	var _DataBinding = __webpack_require__(16);
+	
+	var _DataBinding2 = _interopRequireDefault(_DataBinding);
+	
+	var _Header = __webpack_require__(39);
+	
+	var _Header2 = _interopRequireDefault(_Header);
+	
+	var _MessageList = __webpack_require__(41);
+	
+	var _MessageList2 = _interopRequireDefault(_MessageList);
+	
+	var _ViewController = __webpack_require__(40);
+	
+	var _ViewController2 = _interopRequireDefault(_ViewController);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ChatView = {
+	
+	    /** @type {Application} */
+	    _app: null,
+	
+	    /** @type {Acocunt} */
+	    account: null,
+	
+	    /** @type {Header} */
+	    header: null,
+	
+	    /** @type {MessageList} */
+	    messageList: null,
+	
+	    /** @type {BottomInput} */
+	    bottomInput: null,
+	
+	    get isVisible() {
+	        return this.account.isReady;
+	    },
+	
+	    get isNotVisible() {
+	        return !this.account.isReady;
+	    },
+	
+	    get partner() {
+	        return this.account && this.account.getPartner();
+	    },
+	
+	    _make: function _make(app, account) {
+	        this._app = app;
+	        this.account = account;
+	        this._scope = _DataBinding2.default.makeTemplate('#chat-view', { view: this }).scope;
+	
+	        this.header = (0, _make2.Make)(_Header2.default)(this._app);
+	        this.messageList = (0, _make2.Make)(_MessageList2.default)();
+	        this.bottomInput = (0, _make2.Make)(_BottomInput2.default)();
+	
+	        this.subscribe(this.account);
+	    },
+	
+	    __proto__: _ViewController2.default
+	};
+	
+	exports.default = ChatView;
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _DataBinding = __webpack_require__(16);
 	
 	var _DataBinding2 = _interopRequireDefault(_DataBinding);
 	
@@ -620,11 +1615,14 @@
 	    currentDraft: '',
 	
 	    get inputValue() {
-	        return this.inputFocused || this.currentDraft.length > 0 ? this.currentDraft : this.inputElement && this.inputElement.getAttribute('placeholder');
+	        return this.currentDraft.length > 0 ? this.currentDraft : '<br>';
+	
+	        // return this.inputFocused || this.currentDraft.length > 0 ?
+	        //    this.currentDraft : (this.inputElement && this.inputElement.getAttribute('placeholder'));
 	    },
 	
 	    set inputValue(value) {
-	        this.currentDraft = value;
+	        this.currentDraft = value.replace(/(^<br>|<br>)$/g, '');
 	    },
 	
 	    inputFocused: false,
@@ -652,7 +1650,7 @@
 	exports.default = BottomInput;
 
 /***/ },
-/* 8 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -662,30 +1660,30 @@
 	});
 	exports.DataBinding = undefined;
 	
-	var _Template = __webpack_require__(9);
+	var _Template = __webpack_require__(17);
 	
-	var _Util = __webpack_require__(13);
+	var _Util = __webpack_require__(21);
 	
-	var _Bind = __webpack_require__(10);
+	var _Bind = __webpack_require__(18);
 	
-	var _ViewPort = __webpack_require__(27);
+	var _ViewPort = __webpack_require__(35);
 	
 	var _ViewPort2 = _interopRequireDefault(_ViewPort);
 	
-	__webpack_require__(28);
+	__webpack_require__(36);
 	
-	__webpack_require__(29);
+	__webpack_require__(37);
+	
+	__webpack_require__(38);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	/**
-	 * DataBinding Module
-	 *
-	 * @module DataBinding
-	 * @default module:DataBinding.DataBinding
-	 */
-	
-	NodeList.prototype.forEach = NamedNodeMap.prototype.forEach = Array.prototype.forEach;
+	NodeList.prototype.forEach = NamedNodeMap.prototype.forEach = Array.prototype.forEach; /**
+	                                                                                        * DataBinding Module
+	                                                                                        *
+	                                                                                        * @module DataBinding
+	                                                                                        * @default module:DataBinding.DataBinding
+	                                                                                        */
 	
 	var style = document.createElement('style');
 	
@@ -716,7 +1714,7 @@
 	 */
 
 /***/ },
-/* 9 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -728,19 +1726,19 @@
 	
 	var _make = __webpack_require__(2);
 	
-	var _Bind = __webpack_require__(10);
+	var _Bind = __webpack_require__(18);
 	
-	var _Util = __webpack_require__(13);
+	var _Util = __webpack_require__(21);
 	
-	var _TemplateLoader = __webpack_require__(25);
+	var _TemplateLoader = __webpack_require__(33);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _RenderEngine = __webpack_require__(18);
+	var _RenderEngine = __webpack_require__(26);
 	
 	var _RenderEngine2 = _interopRequireDefault(_RenderEngine);
 	
-	var _ScopePrototype = __webpack_require__(21);
+	var _ScopePrototype = __webpack_require__(29);
 	
 	var _ScopePrototype2 = _interopRequireDefault(_ScopePrototype);
 	
@@ -907,7 +1905,7 @@
 	};
 
 /***/ },
-/* 10 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -923,49 +1921,49 @@
 	
 	var _make = __webpack_require__(2);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Mapping = __webpack_require__(12);
+	var _Mapping = __webpack_require__(20);
 	
-	var _Util = __webpack_require__(13);
+	var _Util = __webpack_require__(21);
 	
-	var _AutoBinding = __webpack_require__(14);
+	var _AutoBinding = __webpack_require__(22);
 	
 	var _AutoBinding2 = _interopRequireDefault(_AutoBinding);
 	
-	var _Binding = __webpack_require__(15);
+	var _Binding = __webpack_require__(23);
 	
 	var _Binding2 = _interopRequireDefault(_Binding);
 	
-	var _BindingRegistry = __webpack_require__(16);
+	var _BindingRegistry = __webpack_require__(24);
 	
 	var _BindingRegistry2 = _interopRequireDefault(_BindingRegistry);
 	
-	var _ClassBinding = __webpack_require__(17);
+	var _ClassBinding = __webpack_require__(25);
 	
 	var _ClassBinding2 = _interopRequireDefault(_ClassBinding);
 	
-	var _EnabledBinding = __webpack_require__(20);
+	var _EnabledBinding = __webpack_require__(28);
 	
 	var _EnabledBinding2 = _interopRequireDefault(_EnabledBinding);
 	
-	var _RenderEngine = __webpack_require__(18);
+	var _RenderEngine = __webpack_require__(26);
 	
 	var _RenderEngine2 = _interopRequireDefault(_RenderEngine);
 	
-	var _ScopePrototype = __webpack_require__(21);
+	var _ScopePrototype = __webpack_require__(29);
 	
 	var _ScopePrototype2 = _interopRequireDefault(_ScopePrototype);
 	
-	var _StyleBinding = __webpack_require__(22);
+	var _StyleBinding = __webpack_require__(30);
 	
 	var _StyleBinding2 = _interopRequireDefault(_StyleBinding);
 	
-	var _TemplateRepeatBinding = __webpack_require__(23);
+	var _TemplateRepeatBinding = __webpack_require__(31);
 	
 	var _TemplateRepeatBinding2 = _interopRequireDefault(_TemplateRepeatBinding);
 	
-	var _TwoWayBinding = __webpack_require__(24);
+	var _TwoWayBinding = __webpack_require__(32);
 	
 	var _TwoWayBinding2 = _interopRequireDefault(_TwoWayBinding);
 	
@@ -1122,8 +2120,9 @@
 	    var eventBinding = _split2[2];
 	    var preventDefault = _split2[3];
 	
-	    /** @type {TwoWayBinding} */
+	    var debounce = null;
 	
+	    /** @type {TwoWayBinding} */
 	    var binding = (0, _make.Make)({
 	        properties: [property],
 	        originalNodeValue: text,
@@ -1142,14 +2141,26 @@
 	                e.preventDefault();
 	            }
 	
-	            console.log(e);
-	            var value = (0, _Parser.parseExpression)(eventBinding, e);
-	            compareTwoWay(value, scope, binding);
+	            if (debounce) {
+	                clearTimeout(debounce);
+	            }
+	
+	            debounce = setTimeout(function () {
+	                var value = (0, _Parser.parseExpression)(eventBinding, e);
+	                compareTwoWay(value, scope, binding);
+	            }, 500);
 	        });
 	    } else if (node.name === _Mapping.attributeNames.get('value')) {
 	        parentNode.addEventListener('keyup', function (e) {
 	            e.preventDefault();
-	            compareTwoWay(getElementValue(e.target), scope, binding);
+	
+	            if (debounce) {
+	                clearTimeout(debounce);
+	            }
+	
+	            debounce = setTimeout(function () {
+	                compareTwoWay(getElementValue(e.target), scope, binding);
+	            }, 500);
 	        });
 	    }
 	};
@@ -1181,6 +2192,8 @@
 	 * @param {string[]} variables list of expressions
 	 * @param {Object} scopeInfo meta data of the current scope
 	 * @param {boolean} singleExpression - indicates if text contains only one expression
+	 * @param {Node} parentNode the element that contains the text node or attribute
+	 *
 	 * @return {void}
 	 */
 	var bindSimple = function bindSimple(text, node, variables, scopeInfo, singleExpression, parentNode) {
@@ -1272,7 +2285,13 @@
 	    events = (0, _Parser.ObjectParser)(events);
 	
 	    Object.keys(events).forEach(function (name) {
-	        var method = events[name];
+	        var _events$name$split = events[name].split('|');
+	
+	        var _events$name$split2 = _slicedToArray(_events$name$split, 2);
+	
+	        var method = _events$name$split2[0];
+	        var modifier = _events$name$split2[1];
+	
 	
 	        if (scope.$methods && scope.$methods[method.trim()]) {
 	            node.addEventListener(name.trim(), function (e) {
@@ -1293,7 +2312,7 @@
 	                method.apply(scope, [e]);
 	
 	                if (!canceled) scope.__apply__();
-	            });
+	            }, modifier === 'capture');
 	        }
 	    });
 	};
@@ -1417,6 +2436,8 @@
 	 * @function
 	 * @param {module:DataBinding~ScopePrototype} scope the scope to destory
 	 * @param {boolean} inProgress                indicates if this is an initial call or not.
+	 *
+	 * @return {void}
 	 */
 	var destoryScope = exports.destoryScope = function destoryScope(scope, inProgress) {
 	    console.log(scopeList);
@@ -1481,7 +2502,7 @@
 	};
 
 /***/ },
-/* 11 */
+/* 19 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1538,26 +2559,46 @@
 	 * @param {ScopePrototype} scope - the scope on which the expression should be parsed.
 	 * @return {*} the result value.
 	 */
-	var parseExpression = exports.parseExpression = function parseExpression(expression, scope) {
-	    var chain = expression.split('.');
+	var parseExpression = exports.parseExpression = function parseExpression(expression) {
+	    for (var _len = arguments.length, contexts = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        contexts[_key - 1] = arguments[_key];
+	    }
 	
-	    chain.forEach(function (item) {
-	        var pos = item.search(/\(\)$/);
+	    var chain = expression.match(/\w+(?:\([^\(\)]*\))*/g);
+	    var scope = null;
+	    var functionTest = /\(((([\w\.]+)(, |,|))+)\)/;
 	
-	        if (scope) {
-	            if (pos > 0) {
-	                var scopeChild = scope[item.substring(0, pos)];
+	    for (var i = 0; i < contexts.length; i++) {
+	        scope = contexts[i];
 	
-	                if (scopeChild) {
-	                    scope = scopeChild.apply(scope);
+	        chain.forEach(function (item) {
+	            var pos = item.search(functionTest);
+	
+	            if (scope) {
+	                if (pos > 0) {
+	                    var args = item.match(functionTest)[1].split(',').map(function (item) {
+	                        return item.trim();
+	                    });
+	                    var scopeChild = scope[item.substring(0, pos)];
+	
+	                    if (scopeChild) {
+	                        args = args.map(function (arg) {
+	                            return parseExpression.apply(undefined, [arg].concat(contexts));
+	                        });
+	                        scope = scopeChild.apply(scope, args);
+	                    } else {
+	                        return null;
+	                    }
 	                } else {
-	                    return '';
+	                    scope = scope[item];
 	                }
-	            } else {
-	                scope = scope[item];
 	            }
+	        });
+	
+	        if (scope !== null && scope !== undefined) {
+	            break;
 	        }
-	    });
+	    }
 	
 	    return scope !== null && typeof scope !== "undefined" ? scope : '';
 	};
@@ -1584,7 +2625,7 @@
 	};
 
 /***/ },
-/* 12 */
+/* 20 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1636,7 +2677,7 @@
 	};
 
 /***/ },
-/* 13 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1776,7 +2817,7 @@
 	};
 
 /***/ },
-/* 14 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1787,13 +2828,13 @@
 	
 	var _make2 = __webpack_require__(2);
 	
-	var _Binding = __webpack_require__(15);
+	var _Binding = __webpack_require__(23);
 	
 	var _Binding2 = _interopRequireDefault(_Binding);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Template = __webpack_require__(9);
+	var _Template = __webpack_require__(17);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -1868,7 +2909,7 @@
 	exports.default = AutoBinding;
 
 /***/ },
-/* 15 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1879,9 +2920,9 @@
 	
 	var _make2 = __webpack_require__(2);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Util = __webpack_require__(13);
+	var _Util = __webpack_require__(21);
 	
 	/** @lends module:DataBinding.Binding.prototype */
 	var Binding = {
@@ -1932,26 +2973,29 @@
 	     */
 	    update: function update(scope) {
 	        var text = this.originalNodeValue;
+	        var localNode = { element: this.parentNode };
 	        var values = this.properties.map(function (key) {
-	            var item = { name: key, value: (0, _Parser.parseExpression)(key, scope) };
+	            var item = { name: key, value: (0, _Parser.parseExpression)(key, localNode, scope) };
 	
 	            return item;
 	        });
 	
 	        if (this.singleExpression) {
-	            text = (0, _Parser.parseExpression)(text, scope);
+	            text = (0, _Parser.parseExpression)(text, localNode, scope);
 	        } else {
 	            values.forEach(function (pair) {
 	                text = text.replace('{{' + pair.name + '}}', pair.value);
 	            });
 	        }
 	
+	        text = text.toString().trim().split(/\s+/).join(' ');
+	
 	        if ((0, _make2.hasPrototype)(this.node, window.Attr)) {
 	            if (this.parentNode.getAttribute(this.node.name) !== text) {
 	                (0, _Util.polyInvoke)(this.parentNode).setAttribute(this.node.name, text);
 	            }
 	        } else {
-	            text = text.toString().replace(/ /g, ' ');
+	            text = text.toString().replace(/\&nbsp\;/g, ' ');
 	
 	            if (this.node.textContent !== text) {
 	                this.node.textContent = text;
@@ -1967,7 +3011,7 @@
 	exports.default = Binding;
 
 /***/ },
-/* 16 */
+/* 24 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2025,7 +3069,7 @@
 	exports.default = BindingRegistry;
 
 /***/ },
-/* 17 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2036,13 +3080,13 @@
 	
 	var _make = __webpack_require__(2);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Binding = __webpack_require__(15);
+	var _Binding = __webpack_require__(23);
 	
 	var _Binding2 = _interopRequireDefault(_Binding);
 	
-	var _RenderEngine = __webpack_require__(18);
+	var _RenderEngine = __webpack_require__(26);
 	
 	var _RenderEngine2 = _interopRequireDefault(_RenderEngine);
 	
@@ -2109,7 +3153,7 @@
 	exports.default = ClassBinding;
 
 /***/ },
-/* 18 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2120,7 +3164,7 @@
 	
 	var _make = __webpack_require__(2);
 	
-	var _TaskList = __webpack_require__(19);
+	var _TaskList = __webpack_require__(27);
 	
 	var _TaskList2 = _interopRequireDefault(_TaskList);
 	
@@ -2315,7 +3359,7 @@
 	exports.default = RenderEngine;
 
 /***/ },
-/* 19 */
+/* 27 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2375,7 +3419,7 @@
 	exports.default = TaskList;
 
 /***/ },
-/* 20 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2386,11 +3430,11 @@
 	
 	var _make = __webpack_require__(2);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Util = __webpack_require__(13);
+	var _Util = __webpack_require__(21);
 	
-	var _Binding = __webpack_require__(15);
+	var _Binding = __webpack_require__(23);
 	
 	var _Binding2 = _interopRequireDefault(_Binding);
 	
@@ -2427,7 +3471,7 @@
 	exports.default = EnabledBinding;
 
 /***/ },
-/* 21 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2436,9 +3480,9 @@
 	    value: true
 	});
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Bind = __webpack_require__(10);
+	var _Bind = __webpack_require__(18);
 	
 	/**
 	 * @class ScopePrototype
@@ -2449,6 +3493,10 @@
 	 * @lends module:DataBinding.ScopePrototype.prototype
 	 */
 	var ScopePrototype = {
+	
+	    _make: function _make() {
+	        this.__apply__ = this.__apply__.bind(this);
+	    },
 	
 	    /**
 	    * will apply the current state of the bound model.
@@ -2525,7 +3573,7 @@
 	exports.default = ScopePrototype;
 
 /***/ },
-/* 22 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2536,13 +3584,13 @@
 	
 	var _make2 = __webpack_require__(2);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Binding = __webpack_require__(15);
+	var _Binding = __webpack_require__(23);
 	
 	var _Binding2 = _interopRequireDefault(_Binding);
 	
-	var _RenderEngine = __webpack_require__(18);
+	var _RenderEngine = __webpack_require__(26);
 	
 	var _RenderEngine2 = _interopRequireDefault(_RenderEngine);
 	
@@ -2598,7 +3646,7 @@
 	exports.default = StyleBinding;
 
 /***/ },
-/* 23 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2611,15 +3659,15 @@
 	
 	var _make2 = __webpack_require__(2);
 	
-	var _Binding = __webpack_require__(15);
+	var _Binding = __webpack_require__(23);
 	
 	var _Binding2 = _interopRequireDefault(_Binding);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Bind = __webpack_require__(10);
+	var _Bind = __webpack_require__(18);
 	
-	var _Util = __webpack_require__(13);
+	var _Util = __webpack_require__(21);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -2811,7 +3859,7 @@
 	exports.default = TemplateRepeatBinding;
 
 /***/ },
-/* 24 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2822,13 +3870,13 @@
 	
 	var _make = __webpack_require__(2);
 	
-	var _Mapping = __webpack_require__(12);
+	var _Mapping = __webpack_require__(20);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Util = __webpack_require__(13);
+	var _Util = __webpack_require__(21);
 	
-	var _Binding = __webpack_require__(15);
+	var _Binding = __webpack_require__(23);
 	
 	var _Binding2 = _interopRequireDefault(_Binding);
 	
@@ -2891,7 +3939,7 @@
 	exports.default = TwoWayBinding;
 
 /***/ },
-/* 25 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2903,7 +3951,7 @@
 	
 	var _make = __webpack_require__(2);
 	
-	var _NetworkRequest = __webpack_require__(26);
+	var _NetworkRequest = __webpack_require__(34);
 	
 	var _NetworkRequest2 = _interopRequireDefault(_NetworkRequest);
 	
@@ -2956,7 +4004,7 @@
 	};
 
 /***/ },
-/* 26 */
+/* 34 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3176,7 +4224,7 @@
 	exports.default = NetworkRequest;
 
 /***/ },
-/* 27 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3185,13 +4233,13 @@
 	    value: true
 	});
 	
-	var _DataBinding = __webpack_require__(8);
+	var _DataBinding = __webpack_require__(16);
 	
 	var _make2 = __webpack_require__(2);
 	
-	var _Util = __webpack_require__(13);
+	var _Util = __webpack_require__(21);
 	
-	var _RenderEngine = __webpack_require__(18);
+	var _RenderEngine = __webpack_require__(26);
 	
 	var _RenderEngine2 = _interopRequireDefault(_RenderEngine);
 	
@@ -3424,7 +4472,7 @@
 	exports.default = ViewPort;
 
 /***/ },
-/* 28 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3435,13 +4483,13 @@
 	
 	var _make2 = __webpack_require__(2);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Binding = __webpack_require__(15);
+	var _Binding = __webpack_require__(23);
 	
 	var _Binding2 = _interopRequireDefault(_Binding);
 	
-	var _BindingRegistry = __webpack_require__(16);
+	var _BindingRegistry = __webpack_require__(24);
 	
 	var _BindingRegistry2 = _interopRequireDefault(_BindingRegistry);
 	
@@ -3515,7 +4563,7 @@
 	exports.default = IfBinding;
 
 /***/ },
-/* 29 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3526,13 +4574,13 @@
 	
 	var _make2 = __webpack_require__(2);
 	
-	var _Parser = __webpack_require__(11);
+	var _Parser = __webpack_require__(19);
 	
-	var _Binding = __webpack_require__(15);
+	var _Binding = __webpack_require__(23);
 	
 	var _Binding2 = _interopRequireDefault(_Binding);
 	
-	var _BindingRegistry = __webpack_require__(16);
+	var _BindingRegistry = __webpack_require__(24);
 	
 	var _BindingRegistry2 = _interopRequireDefault(_BindingRegistry);
 	
@@ -3590,7 +4638,7 @@
 	exports.default = ElementToScopeBinding;
 
 /***/ },
-/* 30 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3599,9 +4647,74 @@
 	    value: true
 	});
 	
-	var _DataBinding = __webpack_require__(8);
+	var _make2 = __webpack_require__(2);
+	
+	var _Parser = __webpack_require__(19);
+	
+	var _Binding = __webpack_require__(23);
+	
+	var _Binding2 = _interopRequireDefault(_Binding);
+	
+	var _BindingRegistry = __webpack_require__(24);
+	
+	var _BindingRegistry2 = _interopRequireDefault(_BindingRegistry);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var AttributeBinding = (0, _make2.Make)({
+	
+	    name: 'bind-attr',
+	
+	    config: null,
+	
+	    _make: function _make(_ref) {
+	        var parentNode = _ref.parentNode;
+	        var scopeInfo = _ref.scopeInfo;
+	        var text = _ref.text;
+	
+	        _Binding2.default._make.apply(this);
+	
+	        this.parentNode = parentNode;
+	        this.config = (0, _Parser.ObjectParser)(text);
+	
+	        scopeInfo.bindings.push(this);
+	    },
+	
+	    update: function update(scope) {
+	        var attrName = this.config.name;
+	        var attrValue = this.config.value ? (0, _Parser.parseExpression)(this.config.value, scope) : '';
+	        var attrEnabled = this.config.enabled ? (0, _Parser.parseExpression)(this.config.enabled, scope) : true;
+	
+	        if (attrEnabled) {
+	            this.parentNode.setAttribute(attrName, attrValue);
+	        } else {
+	            this.parentNode.removeAttribute(attrName);
+	        }
+	    }
+	
+	}, _Binding2.default).get();
+	
+	_BindingRegistry2.default.register(AttributeBinding);
+	
+	exports.default = AttributeBinding;
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _DataBinding = __webpack_require__(16);
 	
 	var _DataBinding2 = _interopRequireDefault(_DataBinding);
+	
+	var _ViewController = __webpack_require__(40);
+	
+	var _ViewController2 = _interopRequireDefault(_ViewController);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -3612,46 +4725,87 @@
 	    /** @type {application} */
 	    application: null,
 	
+	    _scope: null,
+	
 	    get notConnected() {
 	        /** @type {Socket} */
 	        var socket = this.application.socket;
 	
-	        return !socket.online || !socket.connected;
+	        return !socket.isOnline || !socket.isConnected;
 	    },
 	
 	    get connected() {
 	        var socket = this.application.socket;
 	
-	        return socket.online && socket.connected;
+	        return socket.isOnline && socket.isConnected;
 	    },
 	
 	    get connectionStatus() {
 	        var socket = this.application.socket;
 	
-	        if (!socket.online) {
+	        if (!socket.isOnline) {
 	            return 'offline';
-	        } else if (!socket.connected && socket.connecting) {
+	        } else if (!socket.isConnected && socket.isConnecting) {
 	            return 'connecting...';
 	        } else {
 	            return 'diconnected';
 	        }
 	    },
 	
+	    get partner() {
+	        return this.application.account.getPartner();
+	    },
+	
+	    isOnline: function isOnline(online) {
+	        return online ? 'online' : 'away';
+	    },
+	
+	
 	    _make: function _make(application) {
 	        this.application = application;
 	
-	        var scope = _DataBinding2.default.makeTemplate('#header-status', {
+	        this._scope = _DataBinding2.default.makeTemplate('#header-status', {
 	            view: this
 	        }).scope;
 	
-	        this.application.socket.onStatusChange(scope.__apply__.bind(scope, null, true));
-	    }
+	        this.application.socket.onStatusChange(this._scope.__apply__);
+	        this.subscribe(this.application.account);
+	    },
+	
+	    __proto__: _ViewController2.default
 	};
 	
 	exports.default = Header;
 
 /***/ },
-/* 31 */
+/* 40 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var ViewController = {
+	    subscribe: function subscribe() {
+	        var _this = this;
+	
+	        for (var _len = arguments.length, models = Array(_len), _key = 0; _key < _len; _key++) {
+	            models[_key] = arguments[_key];
+	        }
+	
+	        models.forEach(function (model) {
+	            model.on('ready', _this._scope.__apply__);
+	            model.on('change', _this._scope.__apply__);
+	        });
+	    }
+	};
+	
+	exports.default = ViewController;
+
+/***/ },
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3660,45 +4814,855 @@
 	    value: true
 	});
 	
-	var _DataBinding = __webpack_require__(8);
+	var _DataBinding = __webpack_require__(16);
 	
 	var _DataBinding2 = _interopRequireDefault(_DataBinding);
+	
+	var _MessageManager = __webpack_require__(42);
+	
+	var _MessageManager2 = _interopRequireDefault(_MessageManager);
+	
+	var _ViewController = __webpack_require__(40);
+	
+	var _ViewController2 = _interopRequireDefault(_ViewController);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var MessageList = {
 	
-	    currentMessages: [{
-	        type: 'out',
-	        content: 'hey mein Schatz wo bist du?',
-	        timestamp: '1473194720625'
-	    }, {
-	        type: 'out',
-	        content: 'hey 😞😔😕',
-	        timestamp: '1473194783059'
-	    }, {
-	        type: 'in',
-	        content: 'was',
-	        timestamp: '1473194821597'
-	    }, {
-	        type: 'in',
-	        content: 'was',
-	        timestamp: '1473194821597'
-	    }, {
-	        type: 'in',
-	        content: 'was',
-	        timestamp: '1473194821597'
-	    }],
+	    /** @type module:DataBinding.ScopePrototype */
+	    _scope: null,
+	
+	    get currentMessages() {
+	        return _MessageManager2.default.messages;
+	    },
 	
 	    _make: function _make() {
-	        _DataBinding2.default.makeTemplate('#message-list', { view: this });
-	    }
+	        this._scope = _DataBinding2.default.makeTemplate('#message-list', { view: this }).scope;
+	        this.subscribe(_MessageManager2.default);
+	    },
+	
+	    __proto__: _ViewController2.default
 	};
 	
 	exports.default = MessageList;
 
 /***/ },
-/* 32 */
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _obj, _messages, _obj2, _mutatorMap;
+	
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
+	var _CappedArray = __webpack_require__(43);
+	
+	var _CappedArray2 = _interopRequireDefault(_CappedArray);
+	
+	var _CryptoProxy = __webpack_require__(44);
+	
+	var _CryptoProxy2 = _interopRequireDefault(_CryptoProxy);
+	
+	var _EventTarget = __webpack_require__(4);
+	
+	var _EventTarget2 = _interopRequireDefault(_EventTarget);
+	
+	var _Message = __webpack_require__(47);
+	
+	var _Message2 = _interopRequireDefault(_Message);
+	
+	var _Storage = __webpack_require__(6);
+	
+	var _Storage2 = _interopRequireDefault(_Storage);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineEnumerableProperties(obj, descs) { for (var key in descs) { var desc = descs[key]; desc.configurable = desc.enumerable = true; if ("value" in desc) desc.writable = true; Object.defineProperty(obj, key, desc); } return obj; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	var MessageManager = _obj = (_obj2 = {
+	
+	    /** @type {Socket} */
+	    _socket: null,
+	
+	    _loadedMessages: Object.create(_CappedArray2.default).constructor(50),
+	
+	    _account: null
+	
+	}, _defineProperty(_obj2, '_socket', null), _defineProperty(_obj2, '_mapMessages', function _mapMessages(chunk) {
+	    var _this = this;
+	
+	    if (Array.isArray(chunk)) {
+	        return chunk.map(function (message) {
+	            return Object.create(_Message2.default).constructor(message, _this._account);
+	        });
+	    } else {
+	        var stackTrace = null;
+	        var name = null;
+	
+	        try {
+	            throw new Error();
+	        } catch (e) {
+	            stackTrace = e.stack;
+	        }
+	
+	        stackTrace = stackTrace.split('\n');
+	        name = stackTrace.shift();
+	
+	        console.warn('invalid call of', name, 'at \n', stackTrace.join('\n'));
+	    }
+	}), _defineProperty(_obj2, '_decryptMessages', function _decryptMessages(chunk) {
+	    return Promise.all(chunk.map(function (message) {
+	        return _CryptoProxy2.default.decryptMessage(message.body).then(function (body) {
+	            message.body = body;
+	            return message;
+	        });
+	    }));
+	}), _defineProperty(_obj2, 'constructor', function constructor() {
+	    _get(_obj.__proto__ || Object.getPrototypeOf(_obj), '_make', this).call(this);
+	
+	    this._mapMessages = this._mapMessages.bind(this);
+	
+	    return this;
+	}), _defineProperty(_obj2, '_getLatestMessageId', function _getLatestMessageId() {
+	    return _Storage2.default.getMessages(this._account.partner).then(function (chunk) {
+	        return chunk[0] && chunk[0]._id || 0;
+	    });
+	}), _defineProperty(_obj2, '_fetchLatestMessages', function _fetchLatestMessages() {
+	    var _this2 = this;
+	
+	    this._getLatestMessageId().then(function (messageId) {
+	        return _this2._socket.sendMessage('account.syncMessages', messageId);
+	    }).then(function (messages) {
+	        return _this2._decryptMessages(messages.data);
+	    }).then(function (chunk) {
+	        return _this2._mapMessages(chunk);
+	    }).then(function (list) {
+	        var _loadedMessages;
+	
+	        list.forEach(function (message) {
+	            _Storage2.default.storeMessage(message.export());
+	        });
+	
+	        (_loadedMessages = _this2._loadedMessages).push.apply(_loadedMessages, _toConsumableArray(list));
+	        _this2.emit('change');
+	    });
+	}), _messages = 'messages', _mutatorMap = {}, _mutatorMap[_messages] = _mutatorMap[_messages] || {}, _mutatorMap[_messages].get = function () {
+	    return this._loadedMessages.getList();
+	}, _defineProperty(_obj2, '_loadLatestMessages', function _loadLatestMessages() {
+	    var _this3 = this;
+	
+	    _Storage2.default.getMessages(this._account.partner).then(function (chunk) {
+	        var _loadedMessages2;
+	
+	        (_loadedMessages2 = _this3._loadedMessages).push.apply(_loadedMessages2, _toConsumableArray(_this3._mapMessages(chunk.reverse())));
+	        _this3.emit('change');
+	    });
+	}), _defineProperty(_obj2, 'init', function init(account, socket) {
+	    var _this4 = this;
+	
+	    this._account = account;
+	    this._socket = socket;
+	
+	    this._account.on('ready', function () {
+	        _this4._loadLatestMessages();
+	    });
+	
+	    this._socket.on('newTextMessage', function () {
+	        _this4._fetchLatestMessages();
+	    });
+	
+	    this._account.on('authenticated', function () {
+	        if (!_CryptoProxy2.default.syncRequired) {
+	            _this4._fetchLatestMessages();
+	        } else {
+	            _CryptoProxy2.default.on('ready', function () {
+	                return _this4._fetchLatestMessages();
+	            });
+	        }
+	    });
+	}), _defineProperty(_obj2, 'sendMessage', function sendMessage(type, content, to) {
+	    var _this5 = this;
+	
+	    var message = {
+	        from: this._account.id,
+	        to: to
+	    };
+	
+	    if (type === 'text') {
+	        return _CryptoProxy2.default.encryptMessage(content).then(function (body) {
+	            message.body = body;
+	            message.preview = content.substring(0, 15);
+	            return _this5._socket.sendMessage('account.sendTextMessage', message);
+	        }).then(function (result) {
+	            console.log(result);
+	        });
+	    }
+	}), _obj2.__proto__ = _EventTarget2.default, _defineEnumerableProperties(_obj2, _mutatorMap), _obj2);
+	
+	window.MessageManager = MessageManager;
+	
+	exports.default = MessageManager.constructor();
+
+/***/ },
+/* 43 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var CappedArray = {
+	
+	    capacity: 0,
+	
+	    _list: null,
+	
+	    constructor: function constructor() {
+	        var capacity = arguments.length <= 0 || arguments[0] === undefined ? 1000 : arguments[0];
+	
+	        this.capacity = capacity;
+	        this._list = [];
+	
+	        return this;
+	    },
+	    push: function push() {
+	        var _list;
+	
+	        for (var _len = arguments.length, elements = Array(_len), _key = 0; _key < _len; _key++) {
+	            elements[_key] = arguments[_key];
+	        }
+	
+	        if (this._list.length + elements.length > this.capacity) {
+	            var overflow = this._list.length + elements - this._list.capacity;
+	
+	            for (var i = overflow; i > 0; i--) {
+	                this._list.sift();
+	            }
+	        }
+	
+	        return (_list = this._list).push.apply(_list, elements);
+	    },
+	    getList: function getList() {
+	        return this._list.slice();
+	    }
+	};
+	
+	exports.default = CappedArray;
+
+/***/ },
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	var _make = __webpack_require__(2);
+	
+	var _sha = __webpack_require__(45);
+	
+	var _EventTarget = __webpack_require__(4);
+	
+	var _EventTarget2 = _interopRequireDefault(_EventTarget);
+	
+	var _sha2 = __webpack_require__(46);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var bufferToHex = function bufferToHex(buffer) {
+	    return buffer.reduce(function (prev, byte) {
+	        return prev += ('00' + byte.toString(16)).slice(-2);
+	    }, '');
+	};
+	
+	var CryptoProxy = (0, _make.Make)({
+	
+	    /** @type {Account} */
+	    _account: null,
+	
+	    /** @type {WebSocket} */
+	    _socket: null,
+	
+	    /** @type {string} */
+	    _cryptoKey: null,
+	
+	    syncing: false,
+	    syncRequired: false,
+	
+	    RAW_CHALLENGE: 'heartwire SyncChallenge solved',
+	
+	    init: function init(account, socket) {
+	        this._account = account;
+	        this._socket = socket;
+	        this._account.on('authenticated', this._checkSync.bind(this));
+	
+	        this._socket.on('partnerSyncStatus', this._partnerStatusChanged.bind(this));
+	    },
+	
+	    _checkSync: function _checkSync() {
+	        var reason = void 0,
+	            ready = null;
+	
+	        if (this.syncing) {
+	            this.syncing = false;
+	            reason = 'You got disconnected while syncing, please re-try now.';
+	        }
+	
+	        this._cryptoKey = window.localStorage.getItem('heartwire.cryptoKey');
+	        ready = !!this._cryptoKey;
+	
+	        if (!ready) {
+	            this.syncRequired = true;
+	            //            this._account.setSyncChallenge(null);
+	            this.emit('syncRequired', reason);
+	        } else {
+	            this.emit('ready');
+	        }
+	    },
+	
+	    _partnerStatusChanged: function _partnerStatusChanged(_ref) {
+	        var _this = this;
+	
+	        var partner = _ref.data;
+	
+	        if (partner.status === 'ready') {
+	            this._solveChallenge(partner.challenge).then(function () {
+	                _this.syncRequired = false;
+	                _this.syncing = false;
+	
+	                window.localStorage.setItem('heartwire.cryptoKey', _this._cryptoKey);
+	
+	                _this.emit('syncStatus', 'done');
+	                _this.emit('ready');
+	            }).catch(function () {
+	                _this.syncing = false;
+	                _this._cryptoKey = null;
+	                _this._account.setSyncChallenge(null);
+	                _this.emit('syncStatus', 'synchronization failed! You need to choose the same passphrase as your partner!');
+	            });
+	        } else {
+	            this.emit('syncStatus', partner.reason);
+	        }
+	    },
+	
+	    _readStringToBuffer: function _readStringToBuffer(value) {
+	        var bufferView = new TextEncoder('utf-8').encode(value);
+	
+	        return bufferView.buffer;
+	    },
+	
+	    _readStringFromBuffer: function _readStringFromBuffer(buffer) {
+	        //read message from buffer
+	        return new TextDecoder('utf-8').decode(buffer);
+	    },
+	
+	    sync: function sync(passphrase) {
+	        var _this2 = this;
+	
+	        this.syncing = true;
+	
+	        // hash the passphrase
+	        (0, _sha.sha256Native)(btoa(passphrase)).then(function (key) {
+	            _this2._cryptoKey = key;
+	
+	            // create a sync challenge for partner
+	            return _this2.encryptMessage(_this2.RAW_CHALLENGE);
+	        }).then(function (challenge) {
+	            return _this2._account.setSyncChallenge(challenge);
+	        }).then(function () {
+	            _this2._socket.sendMessage('partner.getSyncChallenge');
+	        });
+	    },
+	
+	    encryptMessage: function encryptMessage(rawMessage) {
+	        var _this3 = this;
+	
+	        if (this._cryptoKey) {
+	            var _ret = function () {
+	                var iv = crypto.getRandomValues(new Uint8Array(16));
+	
+	                return {
+	                    v: window.crypto.subtle.importKey('raw', (0, _sha2.hashToBuffer)(_this3._cryptoKey), 'AES-CBC', false, ['encrypt', 'decrypt']).then(function (key) {
+	                        return window.crypto.subtle.encrypt({ name: 'AES-CBC', iv: iv }, key, _this3._readStringToBuffer(rawMessage));
+	                    }).then(function (messageBuffer) {
+	                        messageBuffer = new Uint8Array(messageBuffer);
+	
+	                        var message = bufferToHex(messageBuffer);
+	                        iv = bufferToHex(iv);
+	
+	                        message = btoa(iv + message);
+	
+	                        return message;
+	                    }).catch(function (e) {
+	                        return console.log(e);
+	                    })
+	                };
+	            }();
+	
+	            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	        } else {
+	            console.error('CryptoProxy:', 'no encrytion key set! unable to encrypt message!');
+	            return Promise.reject('no cryptoKey');
+	        }
+	    },
+	
+	    _importKey: function _importKey(hashedPassphrase) {
+	        return window.crypto.subtle.importKey('raw', (0, _sha2.hashToBuffer)(hashedPassphrase), 'AES-CBC', false, ['encrypt', 'decrypt']);
+	    },
+	
+	    decryptMessage: function decryptMessage(messageData) {
+	        var _this4 = this;
+	
+	        if (this._cryptoKey) {
+	            var _ret2 = function () {
+	                messageData = atob(messageData);
+	
+	                // split message data into iv and message parts, then read the hexstring into a buffer.
+	                var iv = (0, _sha2.hashToBuffer)(messageData.substring(0, 32));
+	                var messageBuffer = (0, _sha2.hashToBuffer)(messageData.substring(32));
+	
+	                return {
+	                    v: _this4._importKey(_this4._cryptoKey).then(function (key) {
+	                        return window.crypto.subtle.decrypt({ name: 'AES-CBC', iv: iv }, key, messageBuffer);
+	                    }).then(function (messageBuffer) {
+	                        return _this4._readStringFromBuffer(messageBuffer);
+	                    }).catch(function (e) {
+	                        console.log('CryptoProxy:', 'decryption error,', e);
+	
+	                        return e;
+	                    })
+	                };
+	            }();
+	
+	            if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+	        } else {
+	            console.error('CryptoProxy:', 'no encryption key set! unable to decrypt message!');
+	            return Promise.reject('no cryptoKey');
+	        }
+	    },
+	
+	    _solveChallenge: function _solveChallenge(challenge) {
+	        var _this5 = this;
+	
+	        return this.decryptMessage(challenge).then(function (message) {
+	            if (message === _this5.RAW_CHALLENGE) {
+	                return true;
+	            } else {
+	                return Promise.reject('wrong key');
+	            }
+	        });
+	    }
+	}, _EventTarget2.default)();
+	
+	exports.default = CryptoProxy;
+
+/***/ },
+/* 45 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	
+	var binaryToHex = function binaryToHex(buffer) {
+	    var result = '';
+	
+	    // choose chunk size
+	    if (buffer.length * 8 % 32 === 0) {
+	        buffer = new Uint32Array(buffer);
+	    } else if (buffer.length * 8 % 16 === 0) {
+	        buffer = new Uint16Array(buffer);
+	    } else {
+	        buffer = new Uint8Array(buffer);
+	    }
+	
+	    buffer.forEach(function (chunk) {
+	        chunk = chunk.toString(16);
+	
+	        while (chunk.length < buffer.BYTES_PER_ELEMENT * 2) {
+	            chunk = '0' + chunk;
+	        }
+	
+	        result += chunk;
+	    });
+	
+	    return result;
+	};
+	
+	var sha256Native = exports.sha256Native = function sha256Native(data) {
+	    if (typeof data === 'string') {
+	        data = new TextEncoder('utf-8').encode(data);
+	    }
+	
+	    return window.crypto.subtle.digest('SHA-256', data).then(function (hashBuffer) {
+	        return binaryToHex(hashBuffer);
+	    });
+	};
+
+/***/ },
+/* 46 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	/**
+	 * casts any number to an unsigned 32-bit integer
+	 *
+	 * @param  {number} value any numeric value
+	 *
+	 * @return {number}       an int32 number
+	 */
+	var uint32 = function uint32(value) {
+	    //cast to integer
+	    value = value | 0;
+	
+	    //make value unsigned
+	    value = value >>> 0;
+	
+	    //limit to 32 bit
+	    value = value % Math.pow(2, 32);
+	
+	    return value;
+	};
+	
+	/**
+	 * rotates the bits of an uint32 value to the left.
+	 *
+	 * @param  {number} value should be uint to prevent unwanted side effects
+	 * @param  {number} amount the amount of bits to shift <= 32
+	 *
+	 * @return {number}       the rotated value already casted to uint32
+	 */
+	var leftRotateBits = function leftRotateBits(value, amount) {
+	    value = value << amount | value >>> 32 - amount;
+	    value = uint32(value);
+	
+	    return value;
+	};
+	
+	/**
+	 * makes sure a hex value is 32-bit long.
+	 *
+	 * @param  {string} value a hex string
+	 *
+	 * @return {string}       a hex string which is definetely 32-bit long
+	 */
+	var hex32Bit = function hex32Bit(value) {
+	    while (value.length * 4 < 32) {
+	        value = '0' + value;
+	    }
+	
+	    return value;
+	};
+	
+	/**
+	 * makes sure a hex value is 32-bit long.
+	 *
+	 * @param  {string} value a hex string
+	 *
+	 * @return {string}       a hex string which is definetely 32-bit long
+	 */
+	var hex64Bit = function hex64Bit(value) {
+	    while (value.length * 4 < 64) {
+	        value = '0' + value;
+	    }
+	
+	    return value;
+	};
+	
+	/**
+	 * creates a new array buffer from the utf-8 encoded string.
+	 *
+	 * @param  {string} value the original value
+	 *
+	 * @return {ArrayBuffer}       the encoded value
+	 */
+	var stringToBuffer = function stringToBuffer(value) {
+	    // make sure every character is only 8 bit long
+	    value = unescape(encodeURIComponent(value));
+	
+	    var bufferView = new Uint8Array(value.length);
+	
+	    // push message into buffer
+	    for (var i = 0; i < value.length; i++) {
+	        bufferView[i] = value.charCodeAt(i);
+	    }
+	
+	    return bufferView.buffer;
+	};
+	
+	/**
+	 * the sha-1 algorithm.
+	 *
+	 * @param  {(ArrayBuffer|string)} message the message to hash
+	 *
+	 * @return {string}         the hex representation of the hash value
+	 */
+	var sha1 = function sha1(message) {
+	
+	    if (typeof message === 'string') {
+	        message = stringToBuffer(message);
+	    }
+	
+	    // initial values
+	    var h0 = 0x67452301;
+	    var h1 = 0xEFCDAB89;
+	    var h2 = 0x98BADCFE;
+	    var h3 = 0x10325476;
+	    var h4 = 0xC3D2E1F0;
+	
+	    var messageLength = message.byteLength;
+	    var bufferSize = 0;
+	    var buffer = null;
+	    var view = null;
+	
+	    // calculate buffer size. First in bit and then convert to byte.
+	    bufferSize = (messageLength + 1) * 8;
+	    bufferSize = bufferSize + (448 - bufferSize % 512) + 64;
+	    bufferSize = bufferSize / 8;
+	    buffer = new ArrayBuffer(bufferSize);
+	    view = new Uint8Array(buffer);
+	
+	    //apply data to our local buffer
+	    view.set(new Uint8Array(message), 0);
+	
+	    // append the 1 bit. No idea why this is not just a single bit.
+	    view[messageLength] = 0x80;
+	
+	    //reorder bytes
+	    for (var i = 0; i < messageLength + 1; i += 4) {
+	        var temp = 0;
+	
+	        temp = view[i];
+	        view[i] = view[i + 3];
+	        view[i + 3] = temp;
+	
+	        temp = view[i + 1];
+	        view[i + 1] = view[i + 2];
+	        view[i + 2] = temp;
+	    }
+	
+	    //append the message length
+	    view = new Uint32Array(buffer);
+	    var length = hex64Bit((messageLength * 8).toString(16));
+	    view[view.length - 2] = parseInt(length.substring(0, length.length - 8), 16);
+	    view[view.length - 1] = parseInt(length.substring(length.length - 8), 16);
+	
+	    // process each chunk
+	    for (var _i = 0; _i < bufferSize / (512 / 8); _i++) {
+	        var a = h0;
+	        var b = h1;
+	        var c = h2;
+	        var d = h3;
+	        var e = h4;
+	        var _temp = 0;
+	
+	        view = new Uint32Array(80);
+	        view.set(new Uint32Array(buffer.slice(_i * 512, (_i + 1) * 512)), 0);
+	
+	        for (var _i2 = 16; _i2 < 80; _i2++) {
+	            view[_i2] = leftRotateBits(view[_i2 - 3] ^ view[_i2 - 8] ^ view[_i2 - 14] ^ view[_i2 - 16], 1);
+	        }
+	
+	        for (var _i3 = 0; _i3 < 80; _i3++) {
+	            var f = null;
+	            var k = null;
+	
+	            if (_i3 > -1 && _i3 < 20) {
+	                f = uint32(b & c ^ ~b & d);
+	                k = 0x5A827999;
+	            } else if (_i3 > 19 && _i3 < 40) {
+	                f = uint32(b ^ c ^ d);
+	                k = 0x6ED9EBA1;
+	            } else if (_i3 > 39 && _i3 < 60) {
+	                f = uint32(b & c ^ b & d ^ c & d);
+	                k = 0x8F1BBCDC;
+	            } else if (_i3 > 59 && _i3 < 80) {
+	                f = uint32(b ^ c ^ d);
+	                k = 0xCA62C1D6;
+	            }
+	
+	            _temp = uint32(leftRotateBits(a, 5) + f + e + k + view[_i3]);
+	            e = uint32(d);
+	            d = uint32(c);
+	            c = leftRotateBits(b, 30);
+	            b = uint32(a);
+	            a = uint32(_temp);
+	        }
+	
+	        h0 = uint32(h0 + a);
+	        h1 = uint32(h1 + b);
+	        h2 = uint32(h2 + c);
+	        h3 = uint32(h3 + d);
+	        h4 = uint32(h4 + e);
+	    }
+	
+	    return hex32Bit(h0.toString(16)) + hex32Bit(h1.toString(16)) + hex32Bit(h2.toString(16)) + hex32Bit(h3.toString(16)) + hex32Bit(h4.toString(16));
+	};
+	
+	var hashToBuffer = exports.hashToBuffer = function hashToBuffer(hashString) {
+	    var buffer = new Uint8Array(hashString.length / 2);
+	
+	    hashString.match(/[0-9a-zA-Z]{2}/g).forEach(function (byte, index) {
+	        buffer[index] = parseInt(byte, 16);
+	    });
+	
+	    return buffer.buffer;
+	};
+	
+	exports.default = sha1;
+
+/***/ },
+/* 47 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	
+	var Message = {
+	    _account: null,
+	
+	    constructor: function constructor(data, account) {
+	        Object.assign(this, data);
+	        this._account = account;
+	
+	        return this;
+	    },
+	
+	
+	    get inOrOut() {
+	        return this._account && (this.from === this._account.id ? 'out' : 'in');
+	    },
+	
+	    export: function _export() {
+	        return JSON.parse(JSON.stringify(this, function (key, value) {
+	            return key.indexOf('_') !== 0 || key === '_id' ? value : null;
+	        }));
+	    }
+	};
+	
+	exports.default = Message;
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _DataBinding = __webpack_require__(16);
+	
+	var _DataBinding2 = _interopRequireDefault(_DataBinding);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var LoginDialog = {
+	
+	    /** @type module:DataBinding.ScopePrototype */
+	    _scope: null,
+	    _account: null,
+	
+	    get active() {
+	        return this._account.busy;
+	    },
+	
+	    /**
+	     * [userNameField description]
+	     *
+	     * @type {HTMLInputElement}
+	     */
+	    userNameField: null,
+	
+	    /**
+	     * [passwordField description]
+	     *
+	     * @type {HTMLInputElement}
+	     */
+	    passwordField: null,
+	
+	    username: '',
+	    password: '',
+	
+	    get lastError() {
+	        return this._account.lastError;
+	    },
+	
+	    get hasError() {
+	        return !!this._account.lastError;
+	    },
+	
+	    get isOpen() {
+	        return !this._account.credentialsReady || this.active;
+	    },
+	
+	    get isNotActive() {
+	        return !this.active;
+	    },
+	
+	    get isValid() {
+	        return this.usernameField.validate() && this.passwordField.validate();
+	    },
+	
+	    _make: function _make(account) {
+	        this._scope = _DataBinding2.default.makeTemplate('#login-dialog', { view: this }).scope;
+	        this._account = account;
+	
+	        this._account.on('statusChange', this._scope.__apply__.bind(this._scope));
+	    },
+	
+	    login: function login() {
+	        if (this.view.isValid) {
+	            this.view._account.authenticate(this.view.username, this.view.password);
+	        }
+	    },
+	
+	    getErrorMessage: function getErrorMessage(element) {
+	        element = element.querySelector('input');
+	
+	        return element.validationMessage;
+	    },
+	
+	
+	    preventDefault: function preventDefault(event) {
+	        event.preventDefault();
+	    }
+	
+	};
+	
+	exports.default = LoginDialog;
+
+/***/ },
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3810,7 +5774,7 @@
 	exports.default = PushManager;
 
 /***/ },
-/* 33 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3819,79 +5783,54 @@
 	    value: true
 	});
 	
-	var _make2 = __webpack_require__(2);
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
-	var ScreenManager = (0, _make2.Make)( /** @lends ScreenManager */{
+	var _uuid = __webpack_require__(51);
 	
-	    applicationIsActive: false,
+	var uuid = _interopRequireWildcard(_uuid);
 	
-	    _make: function _make() {
-	        var _this = this;
-	
-	        this.applicationIsActive = !document.hidden;
-	
-	        document.addEventListener('visibilitychange', function () {
-	            _this.applicationIsActive = !document.hidden;
-	
-	            console.log('application is ', _this.applicationIsActive ? 'active' : 'inactive', 'now');
-	        });
-	
-	        document.addEventListener('resume', function (e) {
-	            console.log('application has resumed', e);
-	        });
-	    }
-	})();
-	
-	exports.default = ScreenManager;
-
-/***/ },
-/* 34 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	var Socket = {
 	
 	    _host: '',
 	    _hostId: 0,
+	
+	    /** @type {WebSocket} */
 	    _websocket: null,
 	    _online: false,
 	    _connected: false,
 	    _connecting: false,
+	    _stop: false,
 	    _onStatusChange: null,
 	
 	    _decelerate: null,
 	    _decelerateTimeout: 0,
 	    _decelerateMaxTimeout: 30,
 	
-	    get connected() {
+	    get isConnected() {
 	        return this._connected;
 	    },
 	
-	    set connected(value) {
+	    set isConnected(value) {
 	        this._connected = value;
 	        this._statusChange();
 	    },
 	
-	    get connecting() {
+	    get isConnecting() {
 	        return this._connecting;
 	    },
 	
-	    set connecting(value) {
+	    set isConnecting(value) {
 	        this._connecting = value;
 	        this._statusChange();
 	    },
 	
-	    get online() {
+	    get isOnline() {
 	        return this._online;
 	    },
 	
-	    set online(value) {
+	    set isOnline(value) {
 	        this._online = value;
 	        this._statusChange();
 	    },
@@ -3905,39 +5844,48 @@
 	        this._onceQueue = {};
 	        this._listeners = {};
 	        this._onStatusChange = [];
+	        this._connectedHandler = [];
 	
-	        this.online = navigator.onLine;
+	        this.isOnline = navigator.onLine;
 	
 	        window.addEventListener('online', function () {
-	            _this.online = navigator.onLine;
+	            _this.isOnline = navigator.onLine;
 	            console.log('Socket: online');
 	            _this.init();
 	        });
 	
 	        window.addEventListener('offline', function () {
-	            _this.online = navigator.onLine;
+	            _this.isOnline = navigator.onLine;
 	            console.log('Socket: offline');
 	            _this.reconnect();
 	        });
 	    },
 	
 	    _ack: function _ack(messageId) {
-	        this.sendMessage({}, 'response::' + messageId);
+	        this._websocket.send(JSON.stringify({
+	            type: 'ack:' + messageId,
+	            id: uuid.v5('0', window.performance.now())
+	        }));
 	    },
 	
 	    _onMessage: function _onMessage(message) {
-	        this._ack(message.id);
+	        message = JSON.parse(message.data);
+	        console.log('Socket: new message received', message.type, message);
+	
+	        if (message.type.search('ack') < 0) {
+	            this._ack(message.id);
+	        }
 	
 	        if (this._onceQueue[message.type]) {
 	            this._onceQueue[message.type].forEach(function (fn) {
-	                return fn(message.data);
+	                return fn(message);
 	            });
 	            this._onceQueue[message.type] = [];
 	        }
 	
 	        if (this._listeners[message.type]) {
-	            this._listeners.forEach(function (fn) {
-	                return fn(message.data);
+	            this._listeners[message.type].forEach(function (fn) {
+	                return fn(message);
 	            });
 	        }
 	    },
@@ -3950,65 +5898,87 @@
 	
 	    _onceQueue: null,
 	    _listeners: null,
+	    _connectedHandler: null,
 	
-	    sendMessage: function sendMessage(message) {
+	    sendMessage: function sendMessage(type, message) {
 	        var _this2 = this;
 	
-	        var type = arguments.length <= 1 || arguments[1] === undefined ? "message" : arguments[1];
+	        if (this.isConnected) {
+	            var _ret = function () {
+	                var data = {
+	                    id: uuid.v5('0', window.performance.now().toString()),
+	                    data: message,
+	                    type: type
+	                };
 	
-	        var data = {
-	            //            id: uuid.v4(null, window.performance.now()),
-	            data: message,
-	            type: type
-	        };
+	                var promise = new Promise(function (success, failure) {
+	                    /**    let timeoutId = setTimeout(() => {
+	                            console.warn('Socket: connection timed out! dropping connection!');
+	                            this.reconnect();
+	                            failure();
+	                        }, 10000); */
 	
-	        var promise = new Promise(function (success, timeout) {
-	            if (type.indexOf('response::') === 0) {
-	                return success();
-	            }
+	                    /**            this.once(`ack:${data.id}`, () => {
+	                                    clearTimeout(timeoutId);
+	                                });*/
 	
-	            var timeoutId = setTimeout(timeout, 10000);
+	                    _this2.once('response:' + data.id, function (message) {
+	                        success(message);
+	                    });
+	                });
 	
-	            _this2.once('response::' + data.id, function (data) {
-	                clearTimeout(timeoutId);
-	                success(data.message);
-	            });
-	        });
+	                promise.catch(function () {
+	                    return _this2.reconnect();
+	                });
 	
-	        promise.catch(function () {
-	            return _this2.reconnect();
-	        });
+	                console.log('Socket: message sent', data.type, data);
+	                _this2._websocket.send(JSON.stringify(data));
 	
-	        this.websocket.send(JSON.stringify(data));
+	                return {
+	                    v: promise
+	                };
+	            }();
+	
+	            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	        } else {
+	            return Promise.reject('disconnected');
+	        }
 	    },
 	
 	    reconnect: function reconnect() {
-	        this.websocket.close();
+	        if (this.isConnected) {
+	            this._websocket.close();
+	        }
 	    },
 	
 	    init: function init() {
 	        var _this3 = this;
 	
-	        if (this.online && !this.decelerate) {
+	        if (this.isOnline && !this.decelerate && !this._stop) {
 	
-	            this.connecting = true;
+	            this.isConnecting = true;
 	            this._decelerate = setTimeout(function () {
-	                console.log('trying to establishe a connection...');
+	                console.log('trying to establish a connection...');
 	                _this3._decelerate = null;
-	                _this3.websocket = new WebSocket('ws://' + _this3._host[_this3._hostId]);
+	                _this3._websocket = new WebSocket(_this3._host[_this3._hostId], 'hwp-1.0');
 	
-	                _this3.websocket.onopen = function () {
-	                    _this3.connected = true;
-	                    _this3.connecting = false;
+	                _this3._websocket.onopen = function () {
+	                    _this3.isConnected = true;
+	                    _this3.isConnecting = false;
 	                    _this3._decelerateTimeout = 0;
 	                    console.log('connection established!');
+	
+	                    _this3._connectedHandler.forEach(function (fn) {
+	                        return fn();
+	                    });
 	                };
 	
-	                _this3.websocket.onerror = function (error) {
+	                _this3._websocket.onerror = function (error) {
 	                    console.error('websocket error:', error);
+	                    this.isConnecting = false;
 	                };
 	
-	                _this3.websocket.onclose = function () {
+	                _this3._websocket.onclose = function () {
 	                    // socket closed restart
 	                    _this3._hostId += 1;
 	                    _this3._decelerateTimeout += 1;
@@ -4022,13 +5992,15 @@
 	                    }
 	
 	                    console.warn('websocket disconnected! Retry in ' + _this3._decelerateTimeout + 's to ' + _this3._host[_this3._hostId]);
-	                    _this3.connected = false;
+	                    _this3.isConnected = false;
 	                    _this3.init();
 	                };
 	
-	                _this3.websocket.onmessage = _this3._onMessage.bind(_this3);
+	                _this3._websocket.onmessage = _this3._onMessage.bind(_this3);
 	            }, this._decelerateTimeout * 1000);
 	        }
+	
+	        this._stop = false;
 	    },
 	
 	    once: function once(type, fn) {
@@ -4036,15 +6008,304 @@
 	            this._onceQueue[type] = [];
 	        }
 	
-	        this._onceQueue.push(fn);
+	        this._onceQueue[type].push(fn);
+	    },
+	
+	    on: function on(type, fn) {
+	        if (!this._listeners[type]) {
+	            this._listeners[type] = [];
+	        }
+	
+	        this._listeners[type].push(fn);
 	    },
 	
 	    onStatusChange: function onStatusChange(fn) {
 	        this._onStatusChange.push(fn);
+	    },
+	
+	    /**
+	     * [connected description]
+	     *
+	     * @param  {Function} fn [description]
+	     *
+	     * @return {void}      [description]
+	     */
+	    connected: function connected(fn) {
+	        this._connectedHandler.push(fn);
+	    },
+	
+	    disconnect: function disconnect() {
+	        this._stop = true;
+	        this._websocket.close();
 	    }
 	};
 	
 	exports.default = Socket;
+
+/***/ },
+/* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.v5 = exports.parse = undefined;
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
+	var _make2 = __webpack_require__(2);
+	
+	var _sha = __webpack_require__(46);
+	
+	var _sha2 = _interopRequireDefault(_sha);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 * @module Uuid
+	 */
+	
+	var UUID_SIZE = 16; // 16 byte / 128 bit
+	
+	/** @lends module:Uuid~ReadBytesOfHexString# */
+	var ReadBytesOfHexString = {
+	
+	    /**
+	     * the remaining hex string data
+	     *
+	     * @type {string}
+	     */
+	    _value: null,
+	
+	    /**
+	     * [_make description]
+	     *
+	     * @constructs
+	     *
+	     * @param  {string} value a hex string
+	     *
+	     * @return {void}
+	     */
+	    _make: function _make(value) {
+	        this._value = value;
+	    },
+	
+	    /**
+	     * reads the lowest byte from the hex string, expecting bigendian notation.
+	     *
+	     * @return {number} uint8
+	     */
+	    readByte: function readByte() {
+	        var byte = parseInt(this._value.substring(this._value.length - 2), 16);
+	        this._value = this._value.substring(0, this._value.length - 2);
+	
+	        return byte >>> 0;
+	    }
+	};
+	
+	var hex8Bit = function hex8Bit(value) {
+	    while (value.length * 4 < 8) {
+	        value = '0' + value;
+	    }
+	
+	    return value;
+	};
+	
+	var hex16Bit = function hex16Bit(value) {
+	    while (value.length * 4 < 16) {
+	        value = '0' + value;
+	    }
+	
+	    return value;
+	};
+	
+	var hex32Bit = function hex32Bit(value) {
+	    while (value.length * 4 < 32) {
+	        value = '0' + value;
+	    }
+	
+	    return value;
+	};
+	
+	var hex48Bit = function hex48Bit(value) {
+	    while (value.length * 4 < 32) {
+	        value = '0' + value;
+	    }
+	
+	    return value;
+	};
+	
+	var parse = exports.parse = function parse(uuid) {
+	    var index = 0;
+	    var buffer = new Uint8Array(UUID_SIZE);
+	
+	    var _uuid$split = uuid.split('-');
+	
+	    var _uuid$split2 = _slicedToArray(_uuid$split, 5);
+	
+	    var time_low = _uuid$split2[0];
+	    var time_mid = _uuid$split2[1];
+	    var time_hi_and_version = _uuid$split2[2];
+	    var clock_seq = _uuid$split2[3];
+	    var node = _uuid$split2[4];
+	
+	
+	    var pushToBuffer = function pushToBuffer(byte) {
+	        buffer[index++] = parseInt(byte, 16);
+	    };
+	
+	    hex32Bit(time_low || '').match(/.{1,2}/g).reverse().forEach(pushToBuffer);
+	    hex16Bit(time_mid || '').match(/.{1,2}/g).reverse().forEach(pushToBuffer);
+	    hex16Bit(time_hi_and_version || '').match(/.{1,2}/g).reverse().forEach(pushToBuffer);
+	    hex16Bit(clock_seq || '').match(/.{1,2}/g).reverse().forEach(pushToBuffer);
+	    hex48Bit(node || '').match(/.{1,2}/g).reverse().forEach(pushToBuffer);
+	
+	    return buffer.buffer;
+	};
+	
+	/**
+	 * [v5 description]
+	 *
+	 * @param  {string} namespace the name space of the new uuid
+	 * @param  {string} name      the name of the resource of this uuid
+	 *
+	 * @return {string}           uuid string
+	 */
+	var v5 = exports.v5 = function v5(namespace, name) {
+	    var nameValue = new ArrayBuffer(name.length);
+	    var namespaceValue = parse(namespace);
+	    var completeValue = new Uint8Array(nameValue.byteLength + namespaceValue.byteLength);
+	    var uuidBuffer = new Uint8Array(UUID_SIZE);
+	    var view = null;
+	    var hash = null;
+	
+	    view = new Uint8Array(nameValue);
+	
+	    for (var i = 0; i < name.length; i++) {
+	        view[i] = name.charCodeAt(i);
+	    }
+	
+	    completeValue.set(new Uint8Array(namespaceValue), 0);
+	    completeValue.set(new Uint8Array(nameValue), namespaceValue.byteLength);
+	
+	    hash = (0, _sha2.default)(completeValue.buffer);
+	    hash = (0, _make2.Make)(ReadBytesOfHexString)(hash);
+	
+	    //time_low (0 - 3)
+	    for (var _i = 0; _i < 4; _i++) {
+	        uuidBuffer[_i] = hash.readByte();
+	    }
+	
+	    // time_mid (4 - 5)
+	    for (var _i2 = 4; _i2 < 6; _i2++) {
+	        uuidBuffer[_i2] = hash.readByte();
+	    }
+	
+	    // time_hi_and_version (6 - 7)
+	    for (var _i3 = 6; _i3 < 8; _i3++) {
+	        uuidBuffer[_i3] = hash.readByte();
+	    }
+	
+	    uuidBuffer[7] = uuidBuffer[7] & 0x0F | 0x50;
+	
+	    // clock_seq_hi_and_reserved (8)
+	    uuidBuffer[8] = hash.readByte() & 0x3F | 0x80;
+	
+	    // clock_seq_low (9)
+	    uuidBuffer[9] = hash.readByte();
+	
+	    // node (10 - 15)
+	    for (var _i4 = 10; _i4 < 16; _i4++) {
+	        uuidBuffer[_i4] = hash.readByte();
+	    }
+	
+	    var time_low = hex8Bit(uuidBuffer[3].toString(16)) + hex8Bit(uuidBuffer[2].toString(16)) + hex8Bit(uuidBuffer[1].toString(16)) + hex8Bit(uuidBuffer[0].toString(16));
+	    var time_mid = hex8Bit(uuidBuffer[5].toString(16)) + hex8Bit(uuidBuffer[4].toString(16));
+	    var time_hi_and_version = hex8Bit(uuidBuffer[7].toString(16)) + hex8Bit(uuidBuffer[6].toString(16));
+	    var clock_seq_hi_and_reserved = hex8Bit(uuidBuffer[8].toString(16));
+	    var clock_seq_low = hex8Bit(uuidBuffer[9].toString(16));
+	    var node = hex8Bit(uuidBuffer[15].toString(16)) + hex8Bit(uuidBuffer[14].toString(16)) + hex8Bit(uuidBuffer[13].toString(16)) + hex8Bit(uuidBuffer[12].toString(16)) + hex8Bit(uuidBuffer[11].toString(16)) + hex8Bit(uuidBuffer[10].toString(16));
+	
+	    return time_low + '-' + time_mid + '-' + time_hi_and_version + '-' + clock_seq_hi_and_reserved + clock_seq_low + '-' + node;
+	};
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _CryptoProxy = __webpack_require__(44);
+	
+	var _CryptoProxy2 = _interopRequireDefault(_CryptoProxy);
+	
+	var _DataBinding = __webpack_require__(16);
+	
+	var _DataBinding2 = _interopRequireDefault(_DataBinding);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var SyncDialog = {
+	
+	    /** @type {module:DataBinding.ScopePrototype} */
+	    _scope: null,
+	
+	    currentStatus: null,
+	    passphrase: '',
+	
+	    get isOpen() {
+	        return _CryptoProxy2.default.syncRequired;
+	    },
+	
+	    get busy() {
+	        return _CryptoProxy2.default.syncing;
+	    },
+	
+	    _make: function _make() {
+	        this._scope = _DataBinding2.default.makeTemplate('#sync-dialog', { view: this }).scope;
+	
+	        _CryptoProxy2.default.on('syncRequired', this._syncRequired.bind(this));
+	        _CryptoProxy2.default.on('syncStatus', this._syncStatusChanged.bind(this));
+	    },
+	
+	    _syncStatusChanged: function _syncStatusChanged(status) {
+	        if (status === 'done') {
+	            this.currentStatus = null;
+	        } else {
+	            this.currentStatus = status;
+	        }
+	
+	        this._scope.__apply__();
+	    },
+	
+	    _syncRequired: function _syncRequired(reason) {
+	        this.currentStatus = reason;
+	
+	        this._scope.__apply__();
+	    },
+	
+	    /**
+	     * startSync event handler
+	     *
+	     * @return {void}
+	     */
+	    startSync: function startSync() {
+	        this.view.currentStatus = null;
+	        _CryptoProxy2.default.sync(this.view.passphrase);
+	    },
+	
+	    not: function not(value) {
+	        return !value;
+	    }
+	};
+	
+	exports.default = SyncDialog;
 
 /***/ }
 /******/ ]);

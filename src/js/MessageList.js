@@ -1,38 +1,45 @@
 import DataBinding from '../af/modules/DataBinding.js';
+import MessageManager from './MessageManager.js';
+import ViewController from './ViewController.js';
 
 let MessageList = {
 
-    currentMessages: [
-        {
-            type: 'out',
-            content: 'hey mein Schatz wo bist du?',
-            timestamp: '1473194720625',
-        },
-        {
-            type: 'out',
-            content: 'hey 😞😔😕',
-            timestamp: '1473194783059',
-        },
-        {
-            type: 'in',
-            content: 'was',
-            timestamp: '1473194821597',
-        },
-        {
-            type: 'in',
-            content: 'was',
-            timestamp: '1473194821597',
-        },
-        {
-            type: 'in',
-            content: 'was',
-            timestamp: '1473194821597',
-        }
-    ],
+    /** @type module:DataBinding.ScopePrototype */
+    _scope: null,
+
+    /** @type HTMLElement */
+    messageListElement: null,
+
+    get currentMessages() {
+        return MessageManager.messages;
+    },
 
     _make: function() {
-        DataBinding.makeTemplate('#message-list', { view: this });
-    }
+        this._scope = DataBinding.makeTemplate('#message-list', { view: this }).scope;
+        this.subscribe(MessageManager);
+
+        this._scope.__watch__('view.messageListElement.childElementCount', (value) => {
+            console.log('message list length:', value);
+            
+            if (value > 0) {
+                this._fixMessageListScroll();
+            }
+        });
+    },
+
+
+    _fixMessageListScroll() {
+        let messageList = this.messageListElement.parentElement;
+        let lastMessage = this.messageListElement.lastElementChild;
+        let messages = this.currentMessages;
+        let force = (messages[messages.length - 1].inOrOut === 'out');
+
+        if (force || messageList.scrollTop > (messageList.scrollHeight - messageList.clientHeight - 200)) {
+            lastMessage.scrollIntoView();
+        }
+    },
+
+    __proto__: ViewController,
 };
 
 export default MessageList;

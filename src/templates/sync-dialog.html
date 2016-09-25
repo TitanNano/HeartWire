@@ -1,0 +1,23 @@
+<template>
+    <paper-dialog entry-animation="scale-up-animation" class="sync-dialog"
+    exit-animation="fade-out-animation" modal bind-attr="{ name: opened, enabled: view.isOpen }">
+
+    <h2>Synchronization</h2>
+
+    <div class="body">
+        <div bind-display="view.not(view.busy)">
+            In order to keep the conversations with your partner private,<br>
+            you both need to agree on a passphrase only you two know.
+        </div>
+        <paper-spinner bind-attr="{ name: active, enabled: view.busy}"
+        bind-display="view.busy" class="center" alt="syncing"></paper-spinner>
+
+        <div bind-class="{ error-container: view.not(view.busy) }">{{view.currentStatus}}</div>
+        <paper-input bind-value="view.passphrase" required bind-display="view.not(view.busy)" label="Passphrase"></paper-input>
+    </div>
+
+    <div class="buttons">
+        <paper-button bind-display="view.not(view.busy)" bind-events="{ click: view.startSync }">continue</paper-button>
+    </div>
+    </paper-dialog>
+</template>
