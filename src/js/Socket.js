@@ -95,7 +95,7 @@ let Socket = {
 
         if (this._onceQueue[message.type]) {
             this._onceQueue[message.type].forEach(fn => fn(message));
-            this._onceQueue[message.type] = [];
+            delete this._onceQueue[message.type];
         }
 
         if (this._listeners[message.type]) {
