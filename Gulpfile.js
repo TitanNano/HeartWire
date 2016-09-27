@@ -31,7 +31,7 @@ gulp.task('vulcanize', ['clean', 'copy:bower', 'copy-libs'], () => {
 });
 
 gulp.task('copy-static', ['clean'], () => {
-    gulp.src(['src/**/*.svg', 'src/**/*.jpg', 'src/**/*.png'])
+    gulp.src(['src/**/*.svg', 'src/**/*.jpg', 'src/**/*.png', '!src/bower_components/**'])
         .pipe(gulp.dest('dist/web/'));
 
     return gulp.src('src/css/**')
@@ -45,7 +45,7 @@ gulp.task('copy-libs', ['clean'], () => {
     gulp.src('bower_components/font-roboto/roboto.css')
         .pipe(gulp.dest('dist/web/bower_components/font-roboto/'));
 
-    gulp.src(['bower_components/font-roboto/fonts/*.tff'])
+    gulp.src(['bower_components/font-roboto/fonts/*.ttf'])
         .pipe(gulp.dest('dist/web/bower_components/font-roboto/fonts/'));
 
     return gulp.src('bower_components/webcomponentsjs/webcomponents-lite.min.js')
@@ -77,16 +77,14 @@ gulp.task('compile', ['clean'], () => {
         .pipe(gulp.dest('dist/web/js'));
 });
 
-gulp.task('build', ['copy-static', 'vulcanize', 'compile', 'copy-libs'], () => {
-    return true;
-});
+gulp.task('build', ['copy-static', 'vulcanize', 'compile', 'copy-libs']);
 
 gulp.task('platform:web', ['build'], () => {
     return gulp.src('platforms/web/**')
         .pipe(gulp.dest('dist/web/'));
 });
 
-gulp.task('platform:cordova', () => {
+gulp.task('platform:cordova', ['build'], () => {
     gulp.src('platforms/cordova/**')
         .pipe(gulp.dest('dist/cordova'));
 
@@ -99,6 +97,4 @@ gulp.task('platform:fxos', [], () => {
         .pipe(gulp.dest('dist/fxos'));
 })
 
-gulp.task('default', ['platform:web'], () => {
-    return true;
-});
+gulp.task('default', ['platform:web']);
