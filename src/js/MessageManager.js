@@ -71,8 +71,7 @@ const MessageManager = {
 
     get messages() {
         return this._loadedMessages.getList()
-            .concat(this._pendingMessages)
-            .sort((a, b) => a.date > b.date ? 1 : -1);
+            .concat(this._pendingMessages);
     },
 
 
