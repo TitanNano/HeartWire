@@ -46,6 +46,10 @@
             background: #fff;
             align-items: center;
             padding-right: 1rem;
+            position: relative;
+            font-size: 1.7rem;
+            font-weight: 300;
+            line-height: 2rem;
         }
 
         .bottom-input .input {
@@ -54,33 +58,29 @@
             padding: 0 1.5rem;
             margin: 1.5rem 0;
             padding-right: 1rem;
-            font-size: 1.7rem;
-            font-weight: 300;
             box-sizing: content-box;
             min-height: 2rem;
             max-height: 10rem;
             overflow: auto;
-            line-height: 2rem;
-            position: relative;
         }
 
-        .bottom-input .input::before {
+        .bottom-input::after {
             content: '';
             position: absolute;
-            top:0;
+            left: 1.5rem;
+            color: #a7a7a7;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
         }
 
-        .bottom-input .input.placeholder:not(:focus)::before {
+        .bottom-input.placeholder:not(.focus)::after {
             content: attr(placeholder);
         }
 
         .input:focus {
             outline: none;
             border-color: #595656;
-        }
-
-        .input.placeholder {
-            color: #a7a7a7;
         }
 
         .messages {
@@ -90,13 +90,38 @@
         }
 
         .messages paper-card {
-            border-radius: .4rem;
+            border-radius: .3rem;
             margin: .6rem;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .messages .message {
+            display: flex;
+            align-items: end;
+            max-width: 60%;
+        }
+
+        .messages paper-spinner {
+            height: 15px;
+            width: 15px;
+            margin: 6px 0;
+            --paper-spinner-stroke-width: 2px;
+        }
+
+        .messages li {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages li .date {
+            margin: 0 6px;
+            font-size: 12px;
+            opacity: .3;
         }
 
         .messages .out {
-            display: flex;
-            justify-content: flex-end;
+            align-items: flex-end;
         }
 
         /* App Colors */
@@ -174,6 +199,10 @@
 
         .sync-dialog {
             width: 417px;
+        }
+
+        .bottom-input paper-icon-button[disabled] {
+            color: rgba(0, 0, 0, .6);
         }
     </style>
   </template>
