@@ -94,9 +94,7 @@ const MessageManager = {
             this._fetchLatestMessages();
         });
 
-        this._account.on('authenticated', () => {
-            CryptoProxy.on('ready', () => this._fetchLatestMessages());
-        });
+        CryptoProxy.on('ready', () => this._fetchLatestMessages());
     },
 
     sendMessage(type, content, to) {
@@ -113,15 +111,18 @@ const MessageManager = {
             message.body = content,
             message.preview = content.substring(0, 15);
 
-            promise = CryptoProxy.encryptMessage(content).then(body => {
-                message = message.export();
+            let messageData = message.export();
 
-                message.body = body;
+            promise = CryptoProxy.encryptMessage(content).then(body => {
+                messageData.body = body;
 
                 // send message
-                return this._socket.sendMessage('account.sendTextMessage', message);
+                return this._socket.sendMessage('account.sendTextMessage', messageData);
             });
         }
+
+        //mark message as sending
+        message.status = 'sending';
 
         //push message temporaly into view
         this._pendingMessages.push(message);
