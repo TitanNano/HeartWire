@@ -191,7 +191,12 @@ let Socket = {
     },
 
     init: function() {
-        if (this.isOnline && !this.decelerate && !this._stop) {
+        if (this.isConnected) {
+            console.error('invalid atempt to re initialize an already open socket!');
+            return false;
+        }
+
+        if (this.isOnline && !this._decelerate && !this._stop) {
 
             this.isConnecting = true;
             this._decelerate = setTimeout(() => {
