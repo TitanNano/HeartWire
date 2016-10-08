@@ -1,9 +1,9 @@
 <template>
-    <div class="bottom-input">
-        <div class="input {{view.usePlaceholderClass}}" placeholder="enter message here..."
-        bind-model="view.inputValue" scope-id="view.inputElement" contenteditable
+    <div class="bottom-input{{view.usePlaceholderClass}}" placeholder="enter message here...">
+        <div class="input" contenteditable
+        bind-model="view.inputValue" scope-id="view.inputElement"
         bind-model-event="keyup:innerHTML:target.innerHTML:false"
         bind-events="{focus:view.inputFocusChange, blur:view.inputFocusChange}"></div>
-        <paper-icon-button icon="icons:send" bind-events="{ click: view.sendMessage }"></paper-icon-button>
+        <paper-icon-button icon="icons:send" bind-events="{ click: view.sendMessage }" bind-enabled="view.sendEnabled"></paper-icon-button>
     </div>
 </template>

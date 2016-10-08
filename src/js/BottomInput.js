@@ -5,20 +5,29 @@ let BottomInput = {
     currentDraft: '',
 
     get inputValue() {
-        return this.currentDraft.length > 0 ? this.currentDraft : '<br>';
+        return this.currentDraft;
 
         // return this.inputFocused || this.currentDraft.length > 0 ?
         //    this.currentDraft : (this.inputElement && this.inputElement.getAttribute('placeholder'));
     },
 
     set inputValue(value) {
-        this.currentDraft = value.replace(/(^<br>|<br>)$/g, '');
+        this.currentDraft = value.replace(/(^<br>)/g, '');
     },
 
     inputFocused: false,
 
     get usePlaceholderClass() {
-        return (!this.inputFocused && this.currentDraft.length === 0) ? 'placeholder': '';
+        let classes = '';
+
+        classes += this.inputFocused ? ' focus' : '';
+        classes += this.currentDraft.length === 0 ? ' placeholder': '';
+
+        return classes;
+    },
+
+    get sendEnabled() {
+        return this.currentDraft.length > 0;
     },
 
     /** @type HTMLDivElement */
@@ -30,14 +39,22 @@ let BottomInput = {
         this.__apply__(null, true);
     },
 
-    sendMessage() {
-        let messageText = this.view.inputValue;
+    /**
+     * view event handler for sending messages
+     *
+     * @param {Event} e event
+     *
+     * @return {void}
+     */
+    sendMessage(e) {
+        e.preventDefault();
+
+        let messageText = this.view.inputValue.replace(/<br>/g, '\n');
 
         MessageManager.sendMessage('text', messageText, this.view._account.partner)
-            .then(() => {
-                this.view.currentDraft = '';
-                this.__apply__();
-            });
+
+        this.view.currentDraft = '';
+        this.__apply__();
     },
 
     _scope: null,
