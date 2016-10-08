@@ -12,8 +12,14 @@
                 <template id="message-list" replace>
                     <ul class="messages" scope-id="view.messageListElement">
                         <template bind-repeat="message in view.currentMessages">
-                            <li class="{{message.inOrOut}}">
-                                <paper-card elevation="1">{{message.body}}</paper-card>
+                            <li class="{{message.inOrOut}}" bind-cloak>
+                                <div class="message">
+                                    <paper-spinner bind-if="view.isSending(message)" active></paper-spinner>
+                                    <paper-card elevation="1">
+                                        <span bind-html="message.body"></span>
+                                    </paper-card>
+                                </div>
+                                <div class="date">{{view.formatDate(message.date)}}</span>
                             </li>
                         </template>
                     </ul>
