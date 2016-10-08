@@ -36,7 +36,7 @@ const NotificationManager = {
                 body: text,
                 tag: this._account.partner,
                 renotify: true,
-                icon: './heartwire.png',
+                icon: './icons/heartwire.png',
             });
         }
     },
