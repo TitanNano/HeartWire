@@ -6,6 +6,9 @@
   "loadEagerly": [
     "src/**"
   ],
+  "dontLoad": [
+    "src/af/.travis/**"
+  ],
   "plugins": {
     "complete_strings": {
       "maxLength": 15
