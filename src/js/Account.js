@@ -115,6 +115,7 @@ const Account = Make(/** @lends Account# */{
         this.emit('change');
         console.log('account listeners:', JSON.stringify(this._listeners.authenticated));
         this.emit('authenticated');
+        ScreenManager.updateThemeColor(this.color);
 
         if (!wasReady) {
             this.emit('ready');

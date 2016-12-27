@@ -1,4 +1,5 @@
 import EventTarget from '../af/core/prototypes/EventTarget';
+import Platform from './Platform';
 
 /** @lends ScreenManager */
 let ScreenManager = {
@@ -32,7 +33,13 @@ let ScreenManager = {
             'green': '#4caf50',
         };
 
-        document.head.querySelector('meta[name="theme-color"]').content = colorSet[color];
+        color = colorSet[color];
+
+        document.head.querySelector('meta[name="theme-color"]').content = color;
+
+        if (Platform.isCordova) {
+            window.StatusBar.backgroundColorByHexString(color);
+        }
     },
 
     __proto__: EventTarget,
