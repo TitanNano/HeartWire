@@ -32,8 +32,8 @@
     <preference name="StatusBarBackgroundColor" value="#2196f3" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <plugin name="cordova-plugin-crosswalk-webview" spec="~2.0.0" />
-    <plugin name="cordova-plugin-push-baidu" spec="~1.0.1" />
     <plugin name="cordova-plugin-device" spec="~1.1.2" />
     <plugin name="cordova-plugin-statusbar" spec="~2.1.3" />
     <plugin name="de.appplant.cordova.plugin.local-notification" spec="~0.8.2-dev" />
+    <plugin name="cordova-plugin-push-baidu" spec="~5.3.1000" />
 </widget>
