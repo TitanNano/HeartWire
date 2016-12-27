@@ -4,29 +4,20 @@
     "browser"
   ],
   "loadEagerly": [
-    "src/**"
+    "src/"
   ],
   "dontLoad": [
-    "src/af/.travis/**"
+    "src/af/.travis/"
   ],
   "plugins": {
     "complete_strings": {
       "maxLength": 15
     },
-    "modules": {
-      "dontLoad": "",
-      "load": "",
-      "modules": ""
-    },
-    "es_modules": {},
-    "requirejs": {
-      "baseURL": "",
-      "paths": "",
-      "override": ""
-    },
     "doc_comment": {
       "fullDocs": true,
       "strong": false
-    }
+    },
+    "node_resolve": {},
+    "es_modules": {}
   }
 }

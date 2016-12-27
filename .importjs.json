@@ -3,6 +3,7 @@
         "src/"
     ],
     "stripFileExtensions": [],
+    "excludes": ["src/af/.travis/**"],
     "namedExports" : {
         "src/af/util/make.js" : [
             "Make",
