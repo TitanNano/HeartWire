@@ -5,6 +5,7 @@ const webpack = require('gulp-webpack');
 const rename = require("gulp-rename");
 const templates = require('./gulp-tasks/templates');
 const clean = require('gulp-clean');
+const symlink = require('gulp-sym')
 
 gulp.task('clean', () => {
     return gulp.src('dist', {read: false})
@@ -85,8 +86,8 @@ gulp.task('platform:web', ['build'], () => {
 });
 
 gulp.task('platform:cordova', ['build'], () => {
-    gulp.src('platforms/cordova/**')
-        .pipe(gulp.dest('dist/cordova'));
+    gulp.src('platforms/cordova')
+        .pipe(symlink('dist/cordova'));
 
     return gulp.src('dist/web/**')
         .pipe(gulp.dest('dist/cordova/www/'))

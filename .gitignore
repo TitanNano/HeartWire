@@ -3,3 +3,4 @@ bower_components/
 dist/
 platforms/cordova/platforms/
 platforms/cordova/plugins/
+platforms/cordova/www/
