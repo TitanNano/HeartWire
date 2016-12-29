@@ -18,6 +18,13 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
+
+        <!-- you can use any density that exists in the Android project -->
+        <splash src="splashscreen/splash.mdpi.png" density="port-mdpi"/>
+        <splash src="splashscreen/splash.mdpi.png" density="port-ldpi"/>
+        <splash src="splashscreen/splash.hdpi.png" density="port-hdpi"/>
+        <splash src="splashscreen/splash.xhdpi.png" density="port-xhdpi"/>
+        <splash src="splashscreen/splash.xxhdpi.png" density="port-xxhdpi"/>
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
@@ -30,6 +37,12 @@
     <preference name="xwalkMultipleApk" value="true" />
     <preference name="android-minSdkVersion" value="16" />
     <preference name="StatusBarBackgroundColor" value="#2196f3" />
+
+    <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="SplashScreenDelay" value="10000" />
+    <preference name="SplashScreenBackgroundColor" value="black" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
+
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <plugin name="cordova-plugin-crosswalk-webview" spec="~2.0.0" />
     <plugin name="cordova-plugin-device" spec="~1.1.2" />

@@ -11,6 +11,7 @@ import ScreenManager from './ScreenManager.js';
 import Socket from './Socket.js';
 import Storage from './Storage.js';
 import SyncDialog from './SyncDialog.js';
+import RenderEngine from '../af/modules/DataBinding/RenderEngine';
 
 let application = Object.create({
     name: 'HeartWire',
@@ -50,7 +51,9 @@ let application = Object.create({
     },
 
     init() {
-        PushManager.init();
+        RenderEngine.schedulePostRenderTask(() => setTimeout(() => ScreenManager.notifyScreenReady(), 300));
+
+        PushManager.init(this.account, this.socket);
         CryptoProxy.init(this.account, this.socket);
     },
 

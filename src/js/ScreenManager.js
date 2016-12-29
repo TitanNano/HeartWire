@@ -42,6 +42,14 @@ let ScreenManager = {
         }
     },
 
+    notifyScreenReady() {
+        console.log('screen should be ready...');
+
+        if (Platform.isCordova) {
+            navigator.splashscreen.hide();
+        }
+    },
+
     __proto__: EventTarget,
 };
 
