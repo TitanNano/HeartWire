@@ -12,18 +12,29 @@ let ScreenManager = {
         this.applicationIsActive = !document.hidden;
 
         document.addEventListener('visibilitychange', () => {
-            this.applicationIsActive = !document.hidden;
-
-            this.applicationIsActive ? this.emit('active') : this.emit('inactive');
-
-            console.log('application is', this.applicationIsActive ? 'active' : 'inactive', 'now');
+            this._updateAppVisibilityState(!document.hidden);
         });
 
-        document.addEventListener('resume', (e) => {
-            console.log('application has resumed', e);
+
+        document.addEventListener('resume', () => {
+            console.log('application has resumed');
+            this._updateAppVisibilityState(true);
         });
+
+        document.addEventListener('pause', () => {
+            console.log('application has paused');
+            this._updateAppVisibilityState(false);
+        })
 
         return this;
+    },
+
+    _updateAppVisibilityState(state) {
+        this.applicationIsActive = state;
+
+        this.applicationIsActive ? this.emit('active') : this.emit('inactive');
+
+        console.log('application is', this.applicationIsActive ? 'active' : 'inactive', 'now');
     },
 
     updateThemeColor(color) {
@@ -37,7 +48,7 @@ let ScreenManager = {
 
         document.head.querySelector('meta[name="theme-color"]').content = color;
 
-        if (Platform.isCordova) {
+        if (Platform.isCordova && window.StatusBar) {
             window.StatusBar.backgroundColorByHexString(color);
         }
     },

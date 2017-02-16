@@ -32,7 +32,7 @@ let application = Object.create({
         this.socket = Make(Socket)({
             host: [
 //                'ws://localhost:5000/socket',
-//                'ws://192.168.44.231:5000/socket',
+//                'ws://192.168.44.151:5000/socket',
 //                'ws://192.168.178.25:5000/socket',
                 'wss://heartwire.herokuapp.com/socket',
             ]
@@ -51,7 +51,8 @@ let application = Object.create({
     },
 
     init() {
-        RenderEngine.schedulePostRenderTask(() => setTimeout(() => ScreenManager.notifyScreenReady(), 300));
+        RenderEngine.scheduleRenderTask(() => window.Polymer.dom.flush());
+        RenderEngine.schedulePostRenderTask(() => ScreenManager.notifyScreenReady());
 
         PushManager.init(this.account, this.socket);
         CryptoProxy.init(this.account, this.socket);
