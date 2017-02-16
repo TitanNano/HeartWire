@@ -14,9 +14,18 @@ const Account = Make(/** @lends Account# */{
     _userData: null,
     _partnerData: null,
 
+    isAuthenticated: false,
     credentialsReady: false,
     busy: false,
     lastError: '',
+    authPromise: null,
+
+    /**
+     * [whenReady description]
+     *
+     * @type {Promise}
+     */
+    whenReady: null,
 
     get isReady() {
         return !!this._userData;
@@ -32,6 +41,20 @@ const Account = Make(/** @lends Account# */{
 
     get color() {
         return this._userData && this._userData.color;
+    },
+
+    get isPushRegistered() {
+        return !!(this._userData && this._userData.push);
+    },
+
+    get whenAuthenticated() {
+        return new Promise(success => {
+            if (this.isAuthenticated) {
+                success();
+            } else {
+                this.on('authenticated', success);
+            }
+        });
     },
 
     _make(socket) {
@@ -50,14 +73,28 @@ const Account = Make(/** @lends Account# */{
             Storage.getUserDataByUserName(username).then(user => {
                 if (user && !this._userData) {
                     this._userData = user;
+                    this._onceReady();
 
                     this.emit('ready');
                 }
             });
         }
 
+        this.whenReady = new Promise((success) => {
+            if (this.isReady) {
+                success();
+            } else {
+                this.on('ready', success);
+            }
+        });
+
         this._socket.connected(this._socketConnected.bind(this));
         this._socket.on('partnerStatusChanged', this._partnerStatusChanged.bind(this));
+        this._socket.onStatusChange(() => {
+            if (!this._socket.isConnected) {
+                this._isAuthenticated = false;
+            }
+        })
         ScreenManager.on('active', this._userIsOnline.bind(this));
         ScreenManager.on('inactive', this._userIsAway.bind(this));
     },
@@ -79,11 +116,13 @@ const Account = Make(/** @lends Account# */{
 
     _socketConnected() {
         let [username, password] = this._credentials;
+        let clientId = window.localStorage.getItem('heartwire.clientId');
 
         if (username && password) {
             this._socket.sendMessage('authentication', {
                 username: username,
-                password: password
+                password: password,
+                clientId: clientId
             })
             .then(response => {
                 if (response.data.error) {
@@ -97,12 +136,20 @@ const Account = Make(/** @lends Account# */{
         }
     },
 
+    _onceReady() {
+        ScreenManager.updateThemeColor(this.color);
+    },
+
     _authSuccess({ data: user }) {
         let wasReady = !!this._userData;
         console.log('Account: user ', user, 'sucessfully logged in');
 
+        window.localStorage.setItem('heartwire.clientId', user.clientId);
+        delete user.clientId;
+
         this._userData = user;
         this.busy = false;
+        this.isAuthenticated = true;
 
         Storage.setUserData(user);
         this._loadPartner();
@@ -111,11 +158,12 @@ const Account = Make(/** @lends Account# */{
             this._userIsOnline();
         }
 
+        this._onceReady();
+
         this.emit('statusChange');
         this.emit('change');
         console.log('account listeners:', JSON.stringify(this._listeners.authenticated));
         this.emit('authenticated');
-        ScreenManager.updateThemeColor(this.color);
 
         if (!wasReady) {
             this.emit('ready');
@@ -123,7 +171,7 @@ const Account = Make(/** @lends Account# */{
     },
 
     _authError(error) {
-        console.error('login faild! reason:', error.data.reason);
+        console.error('login faild! reason:', error.data, error.data && error.data.reason);
 
         this.credentialsReady = false;
         this.busy = false;

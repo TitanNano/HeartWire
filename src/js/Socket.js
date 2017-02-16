@@ -21,6 +21,7 @@ let Socket = {
     _onceQueue: null,
     _listeners: null,
     _connectedHandler: null,
+    _connectPromise: null,
 
     get isConnected() {
         return this._connected;
@@ -75,7 +76,9 @@ let Socket = {
             this.isOnline = navigator.onLine;
             console.log('Socket: offline');
             this.reconnect();
-        })
+        });
+
+        this._createPromise();
     },
 
     _ack: function(messageId) {
@@ -145,6 +148,10 @@ let Socket = {
         }
     },
 
+    get whenConnected() {
+        return this._connectPromise;
+    },
+
     reconnect: function() {
         if (this.isConnected) {
             this._websocket.close();
@@ -190,11 +197,23 @@ let Socket = {
         this._connectedHandler.forEach(fn => fn());
     },
 
+    _createPromise() {
+        this._connectPromise = new Promise(success => {
+            if (this.isConnected) {
+                success();
+            } else {
+                this.connected(success);
+            }
+        });
+    },
+
     init: function() {
         if (this.isConnected) {
             console.error('invalid atempt to re initialize an already open socket!');
             return false;
         }
+
+        this._createPromise();
 
         if (this.isOnline && !this._decelerate && !this._stop) {
 
