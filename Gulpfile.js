@@ -5,7 +5,9 @@ const webpack = require('gulp-webpack');
 const rename = require("gulp-rename");
 const templates = require('./gulp-tasks/templates');
 const clean = require('gulp-clean');
-const symlink = require('gulp-sym')
+const symlink = require('gulp-sym');
+const child_process = require('child_process');
+const colors = require('colors');
 
 gulp.task('clean', () => {
     return gulp.src('dist', {read: false})
@@ -23,7 +25,7 @@ gulp.task('vulcanize', ['clean', 'copy:bower', 'copy-libs'], () => {
             abspath: '',
             excludes: ['cordova.js', 'libs/', 'js/app.js'],
             stripExcludes: false,
-            inlineScripts: false,
+            inlineScripts: true,
             inlineCss: false,
         }))
         .pipe(templates.import)
@@ -96,6 +98,23 @@ gulp.task('platform:cordova', ['build'], () => {
 gulp.task('platform:fxos', [], () => {
     gulp.src('platforms/fxos/**')
         .pipe(gulp.dest('dist/fxos'));
-})
+});
+
+gulp.task('platform:android', ['platform:cordova'], () => {
+    child_process.execSync('cordova build android', { cwd: 'platforms/cordova', stdio: [0, 1, 2] });
+
+    console.log(colors.cyan('moving APKs...'));
+
+    return gulp.src(['platforms/cordova/platforms/android/build/outputs/apk/**'])
+        .pipe(gulp.dest('dist/android/'));
+});
+
+gulp.task('run:android', [], () => {
+    return child_process.execSync('cordova run android --nobuild', { cwd: 'platforms/cordova', stdio: [0, 1, 2]})
+});
+
+gulp.task('platform:android:run', ['platform:android'], () => {
+    return child_process.execSync('cordova run android --nobuild', { cwd: 'platforms/cordova', stdio: [0, 1, 2]});
+});
 
 gulp.task('default', ['platform:web']);
