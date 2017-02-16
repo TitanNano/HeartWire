@@ -1,5 +1,6 @@
 import MessageManager from './MessageManager';
 import ScreenManager from './ScreenManager';
+import Platform from './Platform';
 
 const NotificationManager = {
 
@@ -36,7 +37,8 @@ const NotificationManager = {
                 body: text,
                 tag: this._account.partner,
                 renotify: true,
-                icon: './icons/heartwire.png',
+                icon: !Platform.isCordova ? './icons/heartwire.png' : null,
+                silent: false,
             });
         }
     },
@@ -44,6 +46,15 @@ const NotificationManager = {
     _clearUnreadStatus() {
         this._unreadCount = 0;
         this._notification && this._notification.close();
+
+        if (Platform.isCordova) {
+            navigator.plugins.notification.local.clearAll();
+        }
+
+        if (Platform.isFirefoxOS) {
+            window.Navigator.get()
+                .then(list => list.forEach(notification => notification.close()));
+        }
     },
 
     init(account) {
@@ -51,7 +62,9 @@ const NotificationManager = {
         MessageManager.on('change', this._digestMessages.bind(this));
         ScreenManager.on('active', this._clearUnreadStatus.bind(this));
 
-        Notification.requestPermission();
+        if (Platform.hasNotificationPermission) {
+            Notification.requestPermission();
+        }
     }
 };
 
