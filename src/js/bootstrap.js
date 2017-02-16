@@ -1,4 +1,5 @@
 import application from './main.js';
+import Platform from './Platform';
 
 let onDeviceReady = function() {
     application.init();
@@ -6,7 +7,7 @@ let onDeviceReady = function() {
 
 
 let deviceReady = new Promise((ready) => {
-    if (!!window.cordova) {
+    if (Platform.isCordova) {
         document.addEventListener('deviceready', ready, false);
     } else if (document.readyState != 'loading') {
         onDeviceReady();
@@ -16,10 +17,8 @@ let deviceReady = new Promise((ready) => {
 });
 
 let polymerReady = new Promise((ready) => {
-    if (window.Polymer && window.Polymer.ImportStatus._ready) {
+    if (Platform.isPolymer) {
         window.Polymer.ImportStatus.whenReady(ready);
-    } else {
-        window.addEventListener('WebComponentsReady', ready);
     }
 });
 
