@@ -26,7 +26,7 @@ gulp.task('vulcanize', ['clean', 'copy:bower', 'copy-libs'], () => {
             excludes: ['cordova.js', 'libs/', 'js/app.js'],
             stripExcludes: false,
             inlineScripts: true,
-            inlineCss: false,
+            inlineCss: true,
         }))
         .pipe(templates.import)
         .on('error', gutil.log)
