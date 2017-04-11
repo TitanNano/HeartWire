@@ -3,32 +3,5 @@
         "src/"
     ],
     "stripFileExtensions": [],
-    "excludes": ["src/af/.travis/**"],
-    "namedExports" : {
-        "src/af/util/make.js" : [
-            "Make",
-            "hasPrototype",
-            "Mixin"
-        ],
-
-        "src/af/modules/DataBinding/Template.js" : [
-            "makeTemplate"
-        ],
-
-        "src/af/modules/DataBinding/Util.js" : [
-            "polyInvoke",
-            "nodeIsVisible",
-            "getPolyParent"
-        ],
-
-        "src/af/modules/DataBinding/Parser.js" : [
-            "parseExpression",
-            "assignExpression",
-            "ObjectParser"
-        ],
-
-        "src/af/modules/sha-256.js": [
-            "sha256Native"
-        ]
-    }
+    "excludes": ["src/af/.travis/**"]
 }
