@@ -31,10 +31,10 @@ let application = Object.create({
 
         this.socket = Make(Socket)({
             host: [
-//                'ws://localhost:5000/socket',
-//                'ws://192.168.44.151:5000/socket',
+                'ws://localhost:5000/socket',
+                'ws://192.168.44.188:5000/socket',
 //                'ws://192.168.178.25:5000/socket',
-                'wss://heartwire.herokuapp.com/socket',
+//                'wss://heartwire.herokuapp.com/socket',
             ]
         });
 

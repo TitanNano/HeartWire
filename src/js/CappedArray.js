@@ -3,6 +3,8 @@ const CappedArray = {
 
     capacity: 0,
 
+    get length() { return this._list.length; },
+
     _list: null,
 
     constructor(capacity = 1000) {
@@ -26,6 +28,10 @@ const CappedArray = {
 
     getList() {
         return this._list.slice();
+    },
+
+    getItem(index) {
+        return this._list[index];
     }
 };
 

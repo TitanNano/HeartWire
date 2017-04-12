@@ -62,9 +62,16 @@ const MessageManager = {
         .then(list => {
             list.forEach(message => {
                 Storage.storeMessage(message.export());
+
+                for (let i = this._loadedMessages.length -1; i > 0; i--) {
+                    if (this._loadedMessages.getItem(i)._id === message._id) {
+                        return;
+                    }
+                }
+
+                this._loadedMessages.push(message);
             });
 
-            this._loadedMessages.push(...list);
             this.emit('change', list);
         });
     },
