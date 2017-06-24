@@ -15,7 +15,7 @@
     "babel-preset-es2015": "^6.24.0",
     "colors": "^1.1.2",
     "cordova-icon": "^0.9.1",
-    "eslint": "^3.17.1",
+    "eslint": "^4.1.0",
     "eslint-plugin-typelint": "^1.0.9",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
